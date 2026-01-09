@@ -1,0 +1,25 @@
+.public-home {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: #fffefb;
+}
+
+.how-title {
+  text-decoration: underline;
+  font-size: 2.5rem;
+}
+
+.step-image {
+  height: 160px;
+  object-fit: cover;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.card-body {
+  font-size: 1rem;
+}
+
+.card-title {
+  font-weight: bold;
+  color: #444;
+}

@@ -1,0 +1,11 @@
+.btn-orange {
+  background-color: #FFB74D; /* Light orange */
+  color: #fff;
+  border: none;
+  font-weight: bold;
+}
+
+.btn-orange:hover {
+  background-color: #FFA726; /* Slightly deeper orange on hover */
+  color: #fff;
+}
