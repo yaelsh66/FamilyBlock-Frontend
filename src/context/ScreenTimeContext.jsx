@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { useAuth } from './AuthContext';
 import { updateChildTime } from '../api/firebaseUser';
-import { getUserTimeData  } from '../api/firebaseUser';
+import { getUserData  } from '../api/firebaseUser';
 
 const ScreenTimeContext = createContext();
 
@@ -68,7 +68,7 @@ export const ScreenTimeProvider = ({ children }) => {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        await updateChildTime(user.uid, newTotal, newPending, user.token);
+        await updateChildTime(newTotal, newPending, user.token);
         lastWrittenRef.current = {
           totalScreenTime: newTotal,
           pendingScreenTime: newPending,
@@ -84,7 +84,7 @@ export const ScreenTimeProvider = ({ children }) => {
     if (!user?.uid || !user?.token) return;
 
     try {
-      const fields = await getUserTimeData(user.uid, user.token);
+      const fields = await getUserData(user.uid, user.token);
 
       // Parse Firestore document fields safely
       const total = fields?.totalTime?.doubleValue

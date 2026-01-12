@@ -37,7 +37,6 @@ function AddTaskForm() {
       title,
       description,
       time: parseFloat(time) || 0,
-      familyId: user.familyId,
       createdBy: user.uid,
       
 

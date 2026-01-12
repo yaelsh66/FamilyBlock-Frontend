@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const PROJECT_ID = 'family-c56e3';
 const BASE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
-const BACKEND_BASE_URL = 'http://localhost:8081/api';
+const BACKEND_BASE_URL = 'http://localhost:8081/api/task';
 const QUERY_URL = `${BASE_URL}:runQuery`;
 
 const axiosInstance = axios.create({
@@ -163,7 +163,25 @@ export const withdrawTime = async (childId, minutes, token) => {
   }
 };
 // 🔄 Get all tasks for a family
-export const getTasksForFamily = async (familyId, token) => {
+export const getTasksForFamily = async (idToken) => {
+
+  const url = `${BACKEND_BASE_URL}/family_tasks`;
+  try{
+    console.log("FETCH family TASKS RESPONSE START");
+    const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    }
+  });
+  console.log("FETCH FAMILY TASKS RESPONSE:", res.data);
+  return res.data.familyTasksList ?? [];
+  }catch (error) {
+    console.error('❌ Failed to fatch family tasks:', error.message);
+    throw error;
+  }
+  
+}
+export const getTasksForFamily2 = async (familyId, token) => {
   const res = await api.get(`/families/${familyId}/tasks`, {
     headers: authHeader(token),
   });
@@ -172,7 +190,24 @@ export const getTasksForFamily = async (familyId, token) => {
 
 
 // 📥 Get tasks for a child
-export const getTasksForChild = async (childId, token) => {
+export const getTasksForChild = async (idToken) => {
+
+  const url = `${BACKEND_BASE_URL}/child_tasks`;
+  try{
+    const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    }
+  });
+  console.log("FETCH CHILD TASKS RESPONSE:", res.data.childTasksList);
+  return res.data.childTasksList ?? [];
+  }catch (error) {
+    console.error('❌ Failed to fatch child tasks:', error.message);
+    throw error;
+  }
+  
+}
+export const getTasksForChild2 = async (childId, token) => {
   const res = await api.get(`/children/${childId}/tasks`, {
     headers: authHeader(token),
   });
@@ -180,6 +215,29 @@ export const getTasksForChild = async (childId, token) => {
 };
 
 // ➕ Add new task task.title, description, time (minutes), assignedTo[]
+export const addTaskToBackend = async (task, idToken) => {
+  const url = `${BACKEND_BASE_URL}/new_task`;
+
+  const fields = {
+    title: task.title,
+    description: task.description,
+    screenTime: task.time,
+  };
+  
+  try{
+    console.log("task fields: ", fields);
+    await axios.post(url, fields, {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  }catch (error) {
+    console.error('❌ Failed to create new task:', error.message);
+    throw error;
+  
+  };
+}
 export const addTaskToFirestore = async (task, token) => {
   const payload = {
     fields: {

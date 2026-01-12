@@ -62,8 +62,8 @@ function ColorSchemesExample() {
 
   const getHomeLink = () => {
     if (!user) return '/';
-    if (user.role === 'parent') return '/parent';
-    if (user.role === 'child') return '/child';
+    if (user.role === 'PARENT') return '/parent';
+    if (user.role === 'CHILD') return '/child';
     return '/';
   };
 
@@ -76,7 +76,7 @@ function ColorSchemesExample() {
             <>
               <Nav.Link as={Link} to={getHomeLink()}>My Home</Nav.Link>
               <Nav.Link as={Link} to="/newtask">New Task</Nav.Link>
-              <Nav.Link as={Link} to="/tastsList">Tasks</Nav.Link>
+              <Nav.Link as={Link} to="/tasksList">Tasks</Nav.Link>
             </>
           )}
           {!user && (

@@ -29,7 +29,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignupFamily />} />
                 <Route path="/newtask" element={<AddTaskForm />} />
-                <Route path="/tastsList" element={<TasksPage />} />
+                <Route path="/tasksList" element={<TasksPage />} />
                 <Route path="/brawl" element={<Brawl />} />
 
               </Routes>

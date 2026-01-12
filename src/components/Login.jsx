@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from '../api/firebaseAuth';
 
 import { useAuth } from '../context/AuthContext';
-import { getUserTimeData } from '../api/firebaseUser'; 
+import { getUserData } from '../api/firebaseUser'; 
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -24,16 +24,16 @@ function Login() {
 
     
     // Step 3: Fetch user Firestore data (role, familyId)
-    const userData = await getUserTimeData(data.localId, data.idToken);
-    const role = userData.role?.stringValue || '';
-    const familyId = userData.familyId?.stringValue || '';
-    const backgroundImage  = userData.backgroundImage?.stringValue || '';
-    const backgroundColor = userData.backgroundColor?.stringValue || '';
-    const totalTime = userData.totalTime?.doubleValue || 0;
-    const pendingTime = userData.pendingTime?.doubleValue || 0;
-    const nickname = userData.nickname?.stringValue || '';
+    const userData = await getUserData(data.localId, data.idToken);
+    const role = userData.role || '';
+    const familyId = userData.familyId || '';
+    const backgroundImage  = userData.backgroundImage || '';
+    const backgroundColor = userData.backgroundColor || '';
+    const totalTime = userData.totalTime || 0;
+    const pendingTime = userData.pendingTime || 0;
+    const nickname = userData.nickname || '';
     const whatsAppNumber = userData.whatsAppNumber || '';
-
+    
     const user = {
       uid: data.localId,
       email: data.email,
@@ -48,13 +48,13 @@ function Login() {
       nickname,
       whatsAppNumber,
     };
-
+    console.log("user:", user);
     localStorage.setItem('user', JSON.stringify(user));
     dispatch({ type: 'LOGIN', payload: user });
 
-    if (role === 'parent') {
+    if (role === 'PARENT') {
       navigate('/parent');
-    } else if (role === 'child') {
+    } else if (role === 'CHILD') {
       navigate('/child');
     } else {
       navigate('/');

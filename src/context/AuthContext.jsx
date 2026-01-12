@@ -153,6 +153,8 @@ export const AuthProvider = ({ children }) => {
         type: 'UPDATE_PROFILE',
         payload: { nickname },
       });
+      
+
       const updatedUser = {
         ...state.user,
         nickname,

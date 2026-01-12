@@ -1,7 +1,7 @@
 // src/context/TaskContext.js
 import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import * as firebaseTasks from '../api/firebaseTasks';
-import { addTaskToFirestore, deleteTaskFromFirestore, updateTask as apiUpdateTask } from '../api/firebaseTasks';
+import { addTaskToBackend, deleteTaskFromFirestore, updateTask as apiUpdateTask } from '../api/firebaseTasks';
 import { useAuth } from './AuthContext';
 
 export const TaskContext = createContext();
@@ -78,13 +78,17 @@ export const TaskProvider = ({ children }) => {
 
   
   const fetchTasks = useCallback(async () => {
-    if (!user?.token || !user?.familyId || !user?.uid) return;
+    console.log("🧪 fetchTasks called, user =", user);
+    if (!user?.token || !user?.familyId || !user?.uid) {
+      console.log("❌ fetchTasks aborted due to missing user fields");
+      return;
+    }
 
     dispatch({ type: 'LOADING' });
     try {
       const [allTasks, myTasks] = await Promise.all([
-        firebaseTasks.getTasksForFamily(user.familyId, user.token),
-        firebaseTasks.getTasksForChild(user.uid, user.familyId, user.token)
+        firebaseTasks.getTasksForFamily(user.token),
+        firebaseTasks.getTasksForChild(user.token)
       ]);
 
       const assignedIds = new Set(myTasks.map((t) => t.id));
@@ -108,9 +112,9 @@ export const TaskProvider = ({ children }) => {
     if (user) fetchTasks();
   }, [user, fetchTasks]);
 
-   const addTask = async (task) => {
+  const addTask = async (task) => {
     try{
-      await addTaskToFirestore(task, user.token);
+      await addTaskToBackend(task, user.token);
       await fetchTasks();
     } catch (err) {
       console.error('Failed to add new task: ', err)
