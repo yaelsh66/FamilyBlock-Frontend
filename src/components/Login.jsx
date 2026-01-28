@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, FloatingLabel, Alert, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from '../api/firebaseAuth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from '../api/firebaseAuth';
 
 import { useAuth } from '../context/AuthContext';
 import { getUserData } from '../api/firebaseUser'; 
@@ -10,6 +10,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const { dispatch } = useAuth();
   const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ function Login() {
   const handleSubmit = async (e) => {
   e.preventDefault();
   setError('');
+  setInfo('');
 
   try {
     // Step 1: REST login to get idToken and uid
@@ -27,7 +29,6 @@ function Login() {
     const userData = await getUserData(data.localId, data.idToken);
     const role = userData.role || '';
     const familyId = userData.familyId || '';
-    const backgroundImage  = userData.backgroundImage || '';
     const backgroundColor = userData.backgroundColor || '';
     const totalTime = userData.totalTime || 0;
     const pendingTime = userData.pendingTime || 0;
@@ -41,14 +42,14 @@ function Login() {
       refreshToken: data.refreshToken,
       role,
       familyId,
-      backgroundImage ,
       backgroundColor,
       totalTime,
       pendingTime,
       nickname,
       whatsAppNumber,
+      name: userData.name || ''
     };
-    console.log("user:", user);
+    
     localStorage.setItem('user', JSON.stringify(user));
     dispatch({ type: 'LOGIN', payload: user });
 
@@ -66,11 +67,31 @@ function Login() {
   }
 };
 
+  const handlePasswordReset = async () => {
+    setError('');
+    setInfo('');
+
+    if (!email) {
+      setError('Please enter your email above before requesting a password reset.');
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(email);
+      setInfo('If this email is registered, a password reset link has been sent.');
+    } catch (err) {
+      const firebaseError = err?.response?.data?.error?.message;
+      console.error('Password reset error:', firebaseError || err.message);
+      setError('Could not send reset email. Please check the email and try again.');
+    }
+  };
+
 
   return (
     <Container className="mt-5" style={{ maxWidth: '400px' }}>
       <h2 className="mb-4">Login</h2>
       {error && <Alert variant="danger">{error}</Alert>}
+      {info && <Alert variant="success">{info}</Alert>}
 
       <Form onSubmit={handleSubmit}>
         <FloatingLabel controlId="floatingEmail" label="Email address" className="mb-3">
@@ -93,8 +114,16 @@ function Login() {
           />
         </FloatingLabel>
 
-        <Button variant="primary" type="submit" className="w-100">
+        <Button variant="primary" type="submit" className="w-100 mb-2">
           Log In
+        </Button>
+        <Button
+          variant="link"
+          type="button"
+          className="w-100 p-0"
+          onClick={handlePasswordReset}
+        >
+          Forgot your password?
         </Button>
       </Form>
     </Container>

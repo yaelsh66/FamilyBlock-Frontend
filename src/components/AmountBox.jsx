@@ -1,32 +1,16 @@
-import { Card } from 'react-bootstrap';
+import './AmountBox.css';
 
 function AmountBox({ label, time, size = 'medium', icon }) {
-  const sizeStyles = {
-    small: { fontSize: '1rem', padding: '0.5rem 1rem' },
-    medium: { fontSize: '1.5rem', padding: '1rem 1.5rem' },
-    large: { fontSize: '2rem', padding: '1.5rem 2rem' },
-  };
-
-  const boxStyle = {
-    backgroundColor: '#FFE0B2', // light orange
-    color: '#6d4c41', // dark brown text for contrast
-    border: '1px solid #FFCC80',
-    borderRadius: '12px',
-    ...sizeStyles[size],
-  };
-
   return (
-    <Card className="mt-3 shadow-sm" style={boxStyle}>
-      <Card.Body>
-        <div className="d-flex justify-content-between align-items-center">
-          <div>
-            <div style={{ fontSize: '1.2rem', opacity: 0.9 }}>{label}</div>
-            <div style={{ fontWeight: 'bold' }}>{time} min</div>
-          </div>
-          {icon && <div style={{ fontSize: '1.5rem' }}>{icon}</div>}
+    <div className={`amount-box amount-box-${size}`}>
+      <div className="amount-box-content">
+        <div className="amount-box-text-container">
+          <div className={`amount-box-label amount-box-label-${size}`}>{label}</div>
+          <div className={`amount-box-time amount-box-time-${size}`}>{time} min</div>
         </div>
-      </Card.Body>
-    </Card>
+        {icon && <div className={`amount-box-icon amount-box-icon-${size}`}>{icon}</div>}
+      </div>
+    </div>
   );
 }
 

@@ -1,0 +1,349 @@
+.child-home-page {
+  min-height: 100vh;
+  padding-top: 50px;
+  position: relative;
+}
+
+.child-home-refresh-top {
+  position: fixed;
+  top: 70px;
+  left: 1rem;
+  z-index: 100;
+}
+
+.child-home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.child-home-title {
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.25rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.child-home-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.child-home-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  white-space: nowrap;
+}
+
+.child-home-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.child-home-button-lg {
+  padding: 0.875rem 1.75rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.5rem;
+}
+
+.child-home-button-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  border-radius: 0.25rem;
+  width: auto;
+  max-width: fit-content;
+  display: inline-block;
+}
+
+.btn-orange {
+  background-color: #FFB74D;
+  color: #fff;
+  border: none;
+  font-weight: bold;
+}
+
+.btn-orange:hover:not(:disabled) {
+  background-color: #FFA726;
+  color: #fff;
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover:not(:disabled) {
+  color: #fff;
+  background-color: #bb2d3b;
+  border-color: #b02a37;
+}
+
+.child-home-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 3rem;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.child-home-col {
+  flex: 1 1 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.child-home-col-left {
+  flex: 1 1 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.child-home-col-center {
+  flex: 1 1 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.child-home-col-center .child-home-button-lg {
+  width: 100%;
+  max-width: 300px;
+}
+
+.child-home-col-right {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
+.child-home-col-md-6 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.child-home-col-md-2 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.child-home-col-auto {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.child-home-tasks-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0d6efd;
+  margin-bottom: 1rem;
+  text-align: left;
+  padding: 0.625rem 1rem;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 4px solid #0d6efd;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(13, 110, 253, 0.1);
+}
+
+.child-home-tasks-list {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.child-home-tasks-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.child-home-tasks-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.child-home-tasks-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.child-home-tasks-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.child-home-no-tasks {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.child-home-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.child-home-button-group .child-home-button {
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .child-home-container {
+    padding: 0 1.5rem;
+    text-align: left;
+  }
+
+  .child-home-title {
+    text-align: center;
+  }
+
+  .child-home-col-left {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+
+  .child-home-col-center {
+    flex: 0 0 30%;
+    max-width: 30%;
+    padding: 0 1rem;
+  }
+
+  .child-home-col-right {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+
+  .child-home-col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .child-home-col-md-2 {
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+  }
+
+  .child-home-col-auto {
+    flex: 0 0 auto;
+    max-width: none;
+  }
+
+  .child-home-button-group {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .child-home-button-group .child-home-button {
+    width: auto;
+  }
+
+  .child-home-tasks-list {
+    max-height: 400px;
+  }
+
+  .child-home-col-center {
+    padding: 0 0.5rem;
+  }
+
+  .child-home-col-center .child-home-button-lg {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .child-home-page {
+    padding-top: 30px;
+  }
+
+  .child-home-container {
+    padding: 0 0.75rem;
+  }
+
+  .child-home-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .child-home-button-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+  }
+
+  .child-home-row {
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  .child-home-button-group {
+    gap: 0.375rem;
+  }
+
+  .child-home-tasks-title {
+    font-size: 1.25rem;
+    padding: 0.5rem 0.875rem;
+  }
+
+  .child-home-tasks-list {
+    max-height: 300px;
+  }
+
+  .child-home-col-center {
+    padding: 0.5rem 0;
+  }
+
+  .child-home-col-center .child-home-button-lg {
+    max-width: 100%;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+  }
+}

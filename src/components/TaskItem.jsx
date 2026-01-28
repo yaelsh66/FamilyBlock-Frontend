@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, Button, Form, Spinner, Alert, Badge } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { useTaskContext } from '../context/TaskContext';
+import './TaskItem.css';
 
 // Playful yet clean TaskItem. Logic unchanged; UI tweaks: badge wraps, no 🎉 emoji on title.
 export default function TaskItem({ task, isAssigned = false, onComplete, onStartUpdate }) {
@@ -43,114 +43,106 @@ export default function TaskItem({ task, isAssigned = false, onComplete, onStart
   };
 
   return (
-    <Card
-      className="mb-3"
-      style={{ borderRadius: '1rem', backgroundColor: '#fffde7' }}
-      border="warning"
-    >
-      <Card.Body>
-        {error && <Alert variant="danger">{error}</Alert>}
+    <div className="task-item">
+      <div className="task-item-body">
+        {error && <div className="task-item-error">{error}</div>}
 
         {isEditing ? (
           <>  
-            <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
+            <div className="task-form-group">
+              <label className="task-form-label">Title</label>
+              <input
+                className="task-form-control"
                 name="title"
                 value={editedTask.title}
                 onChange={handleChange}
                 placeholder="Enter new title"
               />
-            </Form.Group>
+            </div>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
+            <div className="task-form-group">
+              <label className="task-form-label">Description</label>
+              <input
+                className="task-form-control"
                 name="description"
                 value={editedTask.description}
                 onChange={handleChange}
                 placeholder="Enter description"
               />
-            </Form.Group>
+            </div>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Screen Time (minutes)</Form.Label>
-              <Form.Control
+            <div className="task-form-group">
+              <label className="task-form-label">Screen Time (minutes)</label>
+              <input
+                className="task-form-control"
                 name="time"
                 type="number"
                 value={editedTask.time}
                 onChange={handleChange}
                 min={0}
               />
-            </Form.Group>
+            </div>
 
-            <div className="d-flex justify-content-end">
-              <Button
-                variant="success"
-                size="sm"
+            <div className="task-actions">
+              <button
+                className="btn btn-success btn-sm"
                 onClick={handleSave}
                 disabled={loading}
               >
-                {loading ? <Spinner size="sm" animation="border" /> : '💾 Save'}
-              </Button>
-              <Button
-                variant="outline-secondary"
-                size="sm"
-                className="ms-2"
+                {loading ? <span className="spinner spinner-sm"></span> : '💾 Save'}
+              </button>
+              <button
+                className="btn btn-outline-secondary btn-sm"
                 onClick={() => setIsEditing(false)}
               >
                 ❌ Cancel
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={handleDelete}
-                disabled={loading}
-                className="ms-2"
-              >
-                {loading ? <Spinner size="sm" animation="border" /> : '🗑️ Delete'}
-              </Button>
+              </button>
             </div>
           </>
         ) : (
           <>  
-            <div className="d-flex align-items-center mb-2 flex-wrap">
-              <Card.Title className="flex-grow-1 mb-1">
+            <div className="task-header">
+              <h5 className="task-title">
                 {task.title}
-              </Card.Title>
-              <Badge bg="info" pill className="ms-auto">
+              </h5>
+              <span className="task-badge">
                 ⏰ {task.time} min
-              </Badge>
+              </span>
             </div>
 
-            <Card.Text style={{ fontStyle: 'italic', marginBottom: '1rem' }}>
+            <p className="task-description">
               {task.description}
-            </Card.Text>
+            </p>
 
-            <div className="d-flex gap-2">
+            <div className="task-buttons">
               {isAssigned && onComplete && (
-                <Button
-                  variant="outline-success"
+                <button
+                  className="btn btn-outline-success btn-sm"
                   onClick={() => onComplete(task)}
-                  size="sm"
                 >
                   ✅ Complete
-                </Button>
+                </button>
               )}
 
               {!isEditing && onStartUpdate && (
-                <Button
-                  variant="warning"
-                  size="sm"
+                <button
+                  className="btn btn-warning btn-sm"
                   onClick={() => setIsEditing(true)}
                 >
                   ✏️ Update
-                </Button>
+                </button>
               )}
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={handleDelete}
+                disabled={loading}
+              >
+                {loading ? <span className="spinner spinner-sm"></span> : '🗑️ Delete'}
+              </button>
             </div>
           </>
         )}
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 }

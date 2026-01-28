@@ -5,13 +5,13 @@ import { createUser } from '../../api/firebaseAuth';
 
 function SignupFamily() {
   const [familyId, setFamilyId] = useState('');
-  const [parents, setParents] = useState([{ email: '', password: '' }]);
-  const [children, setChildren] = useState([{ email: '', password: '' }]);
+  const [parents, setParents] = useState([{ email: '', password: '', name: '' }]);
+  const [children, setChildren] = useState([{ email: '', password: '', name: '' }]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   const handleAdd = (type) => {
-    const update = type === 'parent' ? [...parents, { email: '', password: '' }] : [...children, { email: '', password: '' }];
+    const update = type === 'parent' ? [...parents, { email: '', password: '', name: '' }] : [...children, { email: '', password: '', name: '' }];
     type === 'parent' ? setParents(update) : setChildren(update);
   };
 
@@ -37,7 +37,8 @@ function SignupFamily() {
         await createUser({
           idToken: authData.idToken,
           role: user.role,
-          familyName: familyId
+          familyName: familyId,
+          name: user.name
         });
 
       }
@@ -75,6 +76,15 @@ function SignupFamily() {
           <Row key={`parent-${idx}`} className="mb-3">
             <Col>
               <Form.Control
+                type="text"
+                placeholder="Parent Name"
+                value={parent.name}
+                onChange={(e) => handleChange('parent', idx, 'name', e.target.value)}
+                required
+              />
+            </Col>
+            <Col>
+              <Form.Control
                 type="email"
                 placeholder="Parent Email"
                 value={parent.email}
@@ -100,6 +110,15 @@ function SignupFamily() {
         <h5>Children</h5>
         {children.map((child, idx) => (
           <Row key={`child-${idx}`} className="mb-3">
+            <Col>
+              <Form.Control
+                type="text"
+                placeholder="Child Name"
+                value={child.name}
+                onChange={(e) => handleChange('child', idx, 'name', e.target.value)}
+                required
+              />
+            </Col>
             <Col>
               <Form.Control
                 type="email"

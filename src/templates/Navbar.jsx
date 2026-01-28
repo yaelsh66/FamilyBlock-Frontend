@@ -1,62 +1,68 @@
 // src/templates/Navbar.jsx
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useScreenTime } from '../context/ScreenTimeContext';
+import { useCompletions } from '../context/CompletionsContext';
 import { updateUserData } from '../api/firebaseUser';
 import AmountBox from '../components/AmountBox';
-
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import './Navbar.css';
 
 function ColorSchemesExample() {
   const { user, dispatch } = useAuth();
   const { totalScreenTime, pendingScreenTime } = useScreenTime();
+  const { completions } = useCompletions();
   const navigate = useNavigate();
 
   const [backgroundColor, setBackgroundColor] = useState(
     user?.backgroundColor || localStorage.getItem('backgroundColor') || '#ffffff'
   );
-  const [backgroundImage, setBackgroundImage] = useState(
-    user?.backgroundImage || localStorage.getItem('backgroundImage') || ''
-  );
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => setBackgroundImage(reader.result);
-    reader.readAsDataURL(file);
-  };
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    // Use a small delay to avoid immediate closure when opening
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const handleSave = async () => {
     localStorage.setItem('backgroundColor', backgroundColor);
-    localStorage.setItem('backgroundImage', backgroundImage);
     if (user?.uid && user?.token) {
-      await updateUserData(user.uid, { backgroundColor, backgroundImage }, user.token);
-      dispatch({ type: 'UPDATE_BACKGROUND', payload: { backgroundColor, backgroundImage } });
+      await updateUserData(user.uid, { backgroundColor }, user.token);
+      dispatch({ type: 'UPDATE_BACKGROUND', payload: { backgroundColor } });
     }
   };
 
   const handleDelete = async () => {
     setBackgroundColor('#ffffff');
-    setBackgroundImage('');
     localStorage.removeItem('backgroundColor');
-    localStorage.removeItem('backgroundImage');
     if (user?.uid && user?.token) {
-      await updateUserData(user.uid, { backgroundColor: '', backgroundImage: '' }, user.token);
-      dispatch({ type: 'UPDATE_BACKGROUND', payload: { backgroundColor: '', backgroundImage: '' } });
+      await updateUserData(user.uid, { backgroundColor: '' }, user.token);
+      dispatch({ type: 'UPDATE_BACKGROUND', payload: { backgroundColor: '' } });
     }
   };
 
   const handleLogout = () => {
     dispatch({ type: 'LOGOUT' });
-    localStorage.removeItem(user);
+    localStorage.removeItem('user');
     navigate('/');
   };
 
@@ -68,106 +74,162 @@ function ColorSchemesExample() {
   };
 
   return (
-    <Navbar bg="dark" data-bs-theme="dark" fixed="top" expand="lg">
-      <Container>
-        <Navbar.Brand as={Link} to="/">Home</Navbar.Brand>
-        <Nav className="me-auto">
-          {user && (
-            <>
-              <Nav.Link as={Link} to={getHomeLink()}>My Home</Nav.Link>
-              <Nav.Link as={Link} to="/newtask">New Task</Nav.Link>
-              <Nav.Link as={Link} to="/tasksList">Tasks</Nav.Link>
-            </>
-          )}
-          {!user && (
-            <>
-              <Nav.Link as={Link} to="/signup">Signup</Nav.Link>
-              <Nav.Link as={Link} to="/login">Login</Nav.Link>
-            </>
-          )}
+    <nav className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="navbar-brand">Home</Link>
+        
+        <button 
+          className="navbar-toggle"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-          
-            <NavDropdown title="🎉 Fun Time" id="funtime-dropdown" className="ms-3">
-  {/* 🎮 Brawl Game */}
-  <NavDropdown.Item
-    as={Link}
-    to="/brawl"
-    className="fw-bold text-success"
-    style={{ fontSize: '1rem' }}
-  >
-    🕹️ Play Brawl Game
-  </NavDropdown.Item>
+        <div className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
+          <div className="navbar-nav">
+            {user && (
+              <>
+                <Link to={getHomeLink()} className="nav-link" onClick={() => setIsMenuOpen(false)}>My Home</Link>
+                <Link to="/tasksList" className="nav-link" onClick={() => setIsMenuOpen(false)}>Tasks</Link>
+                {user.role === 'CHILD' && (
+                  <Link to="/child/tasks" className="nav-link" onClick={() => setIsMenuOpen(false)}>My Tasks</Link>
+                )}
+                {user.role === 'PARENT' && (
+                  <>
+                    <Link to="/parent/approval" className="nav-link approval-link" onClick={() => setIsMenuOpen(false)}>
+                      Approval
+                      {completions && completions.length > 0 && (
+                        <span className="approval-badge">{completions.length}</span>
+                      )}
+                    </Link>
+                  </>
+                )}
+                <Link to="/profile" className="nav-link" onClick={() => setIsMenuOpen(false)}>Profile</Link>
+              </>
+            )}
+            {!user && (
+              <>
+                <Link to="/signup" className="nav-link" onClick={() => setIsMenuOpen(false)}>Signup</Link>
+                <Link to="/login" className="nav-link" onClick={() => setIsMenuOpen(false)}>Login</Link>
+              </>
+            )}
 
-  <NavDropdown.Divider />
+            <div className="dropdown" ref={dropdownRef}>
+              <button 
+                className="dropdown-toggle"
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsDropdownOpen(prev => !prev);
+                }}
+              >
+                🎉 Fun Time
+              </button>
+              {isDropdownOpen && (
+                <div 
+                  className="dropdown-menu"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  style={{ display: 'block' }}
+                >
+                  {/* 🎮 Brawl Game */}
+                  <Link 
+                    to="/brawl" 
+                    className="dropdown-item"
+                    style={{ color: '#003366', opacity: 1, visibility: 'visible' }}
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <span style={{ color: '#003366', display: 'inline' }}>🕹️ Play Brawl Game</span>
+                  </Link>
 
-  {/* 🎨 Background Settings */}
-  <NavDropdown.Header className="text-primary">🎨 Background Settings</NavDropdown.Header>
+                  <div className="dropdown-divider"></div>
 
-  <Form className="px-3 pt-2">
-    <Form.Label className="small mb-1">Choose Color:</Form.Label>
-    <Form.Control
-      type="color"
-      value={backgroundColor}
-      onChange={(e) => setBackgroundColor(e.target.value)}
-    />
-  </Form>
+                  {/* 🎨 Background Settings */}
+                  <div className="dropdown-header">🎨 Background Settings</div>
 
-  <Form className="px-3 pt-3">
-    <Form.Label className="small mb-1">Upload Image:</Form.Label>
-    <Form.Control
-      type="file"
-      accept="image/*"
-      onChange={handleImageUpload}
-    />
-  </Form>
+                  <div className="dropdown-form">
+                    <label className="form-label">Choose Color:</label>
+                    <input
+                      type="color"
+                      className="form-control"
+                      value={backgroundColor}
+                      onChange={(e) => setBackgroundColor(e.target.value)}
+                    />
+                  </div>
 
-  <div className="d-flex justify-content-between px-3 py-3">
-    <Button size="sm" variant="success" onClick={handleSave} disabled={!user?.uid}>
-      💾 Save
-    </Button>
-    <Button size="sm" variant="outline-danger" onClick={handleDelete}>
-      🗑️ Delete
-    </Button>
-  </div>
+                  <div className="dropdown-buttons">
+                    <button 
+                      className="btn btn-success" 
+                      onClick={handleSave} 
+                      disabled={!user?.uid}
+                    >
+                      💾 Save
+                    </button>
+                    <button 
+                      className="btn btn-outline-danger" 
+                      onClick={handleDelete}
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
 
-  {!user?.uid && (
-    <small className="text-muted px-3 pb-2 d-block">
-      Login to save settings permanently
-    </small>
-  )}
+                  {!user?.uid && (
+                    <small className="dropdown-hint">
+                      Login to save settings permanently
+                    </small>
+                  )}
 
-  {/* ⏱️ Screen Time for child */}
-  {user?.role === 'child' && (
-    <>
-      <NavDropdown.Divider />
-      <NavDropdown.Header className="text-primary">🕒 Screen Time</NavDropdown.Header>
-      <div className="px-3 py-2">
-        <AmountBox label="Used Time" time={totalScreenTime} />
-        <AmountBox label="Pending Time" time={pendingScreenTime} />
-      </div>
-    </>
-  )}
+                  {/* ⏱️ Screen Time for child */}
+                  {user?.role === 'child' && (
+                    <>
+                      <div className="dropdown-divider"></div>
+                      <div className="dropdown-header">🕒 Screen Time</div>
+                      <div className="dropdown-screen-time">
+                        <AmountBox label="Used Time" time={totalScreenTime} />
+                        <AmountBox label="Pending Time" time={pendingScreenTime} />
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
 
-  <NavDropdown.Divider />
-
-  {/* 🔓 Logout */}
-  <div className="d-flex justify-content-center pb-3 px-3">
-    <Button variant="outline-danger" size="sm" onClick={handleLogout}>
-      🔓 Logout
-    </Button>
-  </div>
-</NavDropdown>
-
-          
-        </Nav>
-
-        {user && (
-          <div className="d-flex align-items-center text-white gap-3">
-            <span>👋 Hi, {user.nickname || user.email}</span>
+            {/* Logout button - appears in nav on mobile, in navbar-user on desktop */}
+            {user && (
+              <button 
+                className="nav-link nav-link-logout" 
+                onClick={() => {
+                  handleLogout();
+                  setIsMenuOpen(false);
+                }}
+              >
+                🔓 Logout
+              </button>
+            )}
           </div>
-        )}
-      </Container>
-    </Navbar>
+
+          {user && (
+            <div className="navbar-user">
+              <span>👋 Hi, {user.nickname || user.email}</span>
+              <button 
+                className="btn btn-outline-danger navbar-logout-btn" 
+                onClick={handleLogout}
+              >
+                🔓 Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
   );
 }
 

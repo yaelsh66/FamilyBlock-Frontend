@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
 const weekDayNames = [
-  'Sunday', 'Monday', 'Tuesday',
-  'Wednesday', 'Thursday', 'Friday', 'Saturday'
+  'SUNDAY', 'MONDAY', 'TUESDAY',
+  'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'
 ];
 
 function WeekDayPicker({ onChange, onDone}) {

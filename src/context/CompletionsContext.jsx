@@ -83,6 +83,22 @@ export const CompletionsProvider = ({ children }) => {
     }
   };
 
+  // Refresh completions list
+  const refreshCompletions = async () => {
+    if (!user?.uid || !user.token) {
+      dispatch({ type: 'LOAD_SUCCESS', payload: [] });
+      return;
+    }
+
+    dispatch({ type: 'LOAD_START' });
+    try {
+      const data = await getPendingCompletionsForFamily(user.familyId, user.token);
+      dispatch({ type: 'LOAD_SUCCESS', payload: data });
+    } catch (error) {
+      dispatch({ type: 'LOAD_ERROR', payload: error.message || error.toString() });
+    }
+  };
+
   return (
     <CompletionsContext.Provider
       value={{
@@ -91,6 +107,7 @@ export const CompletionsProvider = ({ children }) => {
         error: state.error,
         approveCompletion: approve,
         rejectCompletion: reject,
+        refreshCompletions,
       }}
     >
       {children}

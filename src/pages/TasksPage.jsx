@@ -1,19 +1,37 @@
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
 import TaskListCard from '../components/TaskListCard';
 import TasksList from '../components/TasksList';
+import AddTaskForm from './forms/AddTaskForm';
+import './TasksPage.css';
 
 function TasksPage() {
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+
   return (
-    <Container className="my-4">
-      <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={6}>
-          <TaskListCard title="Tasks">
+    <div className="tasks-page-container">
+      <div className="tasks-page-row">
+        <div className="tasks-page-col">
+          <div className="tasks-page-header">
+            <h2 className="tasks-page-title">Tasks</h2>
+            <Button 
+              variant="success" 
+              onClick={() => setShowAddTaskModal(true)}
+              className="tasks-page-add-button"
+            >
+              ➕ Add Task
+            </Button>
+          </div>
+          <TaskListCard>
             <TasksList />
           </TaskListCard>
-        </Col>
-      </Row>
-    </Container>
+        </div>
+      </div>
+      <AddTaskForm 
+        show={showAddTaskModal} 
+        onHide={() => setShowAddTaskModal(false)} 
+      />
+    </div>
   );
 }
 

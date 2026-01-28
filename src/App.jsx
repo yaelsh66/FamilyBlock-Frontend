@@ -13,6 +13,10 @@ import Brawl from './components/Brawl.jsx';
 import BackgroundWrapper from './templates/BackgroundWrapper.jsx';
 import { Container, Row, Col } from 'react-bootstrap';
 import WeeklyTable from './components/WeeklyTable.jsx';
+import ParentControl from './pages/ParentControl.jsx';
+import ParentApprovalPage from './pages/ParentApprovalPage.jsx';
+import Profile from './pages/Profile.jsx';
+import Device from './pages/Device.jsx';
 function App() {
   return (
     <div>
@@ -31,7 +35,10 @@ function App() {
                 <Route path="/newtask" element={<AddTaskForm />} />
                 <Route path="/tasksList" element={<TasksPage />} />
                 <Route path="/brawl" element={<Brawl />} />
-
+                <Route path="/parent/controll" element={<ParentControl />} />
+                <Route path="/parent/approval" element={<ParentApprovalPage />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/device/:childId" element={<Device />} />
               </Routes>
             </BackgroundWrapper>
           

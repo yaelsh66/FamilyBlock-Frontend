@@ -16,7 +16,7 @@ function TaskDraggable({ task, index, isAssigned, onComplete }) {
   };
 
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable draggableId={String(task.id)} index={index}>
       {(provided, snapshot) => (
         <div
           className="list-group-item"

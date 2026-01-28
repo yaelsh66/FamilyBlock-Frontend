@@ -1,7 +1,7 @@
 // src/context/TaskContext.js
 import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import * as firebaseTasks from '../api/firebaseTasks';
-import { addTaskToBackend, deleteTaskFromFirestore, updateTask as apiUpdateTask } from '../api/firebaseTasks';
+import { addTaskToBackend, deleteTaskBackend, updateTask as apiUpdateTask } from '../api/firebaseTasks';
 import { useAuth } from './AuthContext';
 
 export const TaskContext = createContext();
@@ -78,7 +78,6 @@ export const TaskProvider = ({ children }) => {
 
   
   const fetchTasks = useCallback(async () => {
-    console.log("🧪 fetchTasks called, user =", user);
     if (!user?.token || !user?.familyId || !user?.uid) {
       console.log("❌ fetchTasks aborted due to missing user fields");
       return;
@@ -88,17 +87,16 @@ export const TaskProvider = ({ children }) => {
     try {
       const [allTasks, myTasks] = await Promise.all([
         firebaseTasks.getTasksForFamily(user.token),
-        firebaseTasks.getTasksForChild(user.token)
+        firebaseTasks.getTasksForChild(user.token),
       ]);
-
-      const assignedIds = new Set(myTasks.map((t) => t.id));
-      const unassigned = allTasks.filter((t) => !assignedIds.has(t.id));
-
+      console.log("allTasks", allTasks);
+      console.log("myTasks", myTasks);
+      
       dispatch({
         type: 'SET_TASKS',
         payload: {
           assignedTasks: myTasks,
-          availableTasks: unassigned,
+          availableTasks: allTasks,
           allFamilyTasks: allTasks,
         },
       });
@@ -124,7 +122,7 @@ export const TaskProvider = ({ children }) => {
 
   const deleteTask = async (taskId) => {
     try{
-      await deleteTaskFromFirestore(taskId, user.token);
+      await deleteTaskBackend(taskId, user.token);
       dispatch({ type: 'CLEAR_WEEKLY_FOR_TASK', payload: { taskId } });
       await fetchTasks();
     } catch (err) {
@@ -143,23 +141,19 @@ export const TaskProvider = ({ children }) => {
 
   const reassignTaskOptimistic = async (taskId, newAssignedTo, moveInfo) => {
     // 1. Optimistically update UI
-    dispatch({
-      type: 'SET_TASKS',
-      payload: {
-        assignedTasks: moveInfo.newAssigned,
-        availableTasks: moveInfo.newAvailable,
-        allFamilyTasks: [...moveInfo.newAssigned, ...moveInfo.newAvailable],
-      },
-    });
+    
 
     // 2. Firestore update in background
+
     try {
       await firebaseTasks.updateTaskAssignment(taskId, newAssignedTo, user.token);
+      await fetchTasks();
     } catch (err) {
       console.error('Failed to update assignment:', err);
-      // Optionally revert or refetch
       fetchTasks();
     }
+    
+    
   };
 
   const updateTask = async (taskId, updatedFields) => {

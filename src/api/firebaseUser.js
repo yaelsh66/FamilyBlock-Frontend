@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const PROJECT_ID = 'family-c56e3';
-const BASE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
-const BACKEND_BASE_URL = 'http://localhost:8081/api/auth'
 
-// 📥 Get Firestore user document getUserData
+
+const BACKEND_BASE_URL2 = 'http://localhost:8081/api/auth'
+const BACKEND_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/auth`
+
 export const getUserData = async (uid, idToken) => {
   const url = `${BACKEND_BASE_URL}/me`;
 
@@ -45,27 +45,6 @@ export const updateChildTime = async (totalTime, pendingTime, idToken) => {
   }
 
 }
-export const updateChildTime2 = async (childId, totalTime, pendingTime, idToken) => {
-  const url = `${BASE_URL}/users/${childId}?updateMask.fieldPaths=totalTime&updateMask.fieldPaths=pendingTime`;
-
-  const payload = {
-    fields: {
-      totalTime: { doubleValue: totalTime },
-      pendingTime: { doubleValue: pendingTime },
-    },
-  };
-
-  try {
-    await axios.patch(url, payload, {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
-  } catch (err) {
-    console.error('❌ Failed to update child time:', err.response?.data || err.message);
-    throw err;
-  }
-};
 
 export const updateUserData = async (uid, updates, idToken) => {
   const url = `${BACKEND_BASE_URL}/update`;
@@ -73,14 +52,12 @@ export const updateUserData = async (uid, updates, idToken) => {
   const fields = {};
   if (updates.backgroundColor !== undefined)
     fields.backgroundColor = updates.backgroundColor;
-  if (updates.backgroundImage !== undefined)
-    fields.backgroundImage = updates.backgroundImage;
   if (updates.nickname !== undefined)
     fields.nickname = updates.nickname;
   if (updates.avatarUrl !== undefined)
     fields.avatarUrl = updates.avatarUrl;
-  if (updates.whatsAppNumber !== undefined)
-    fields.whatsAppNumber = updates.whatsAppNumber;
+  if (updates.name !== undefined)
+    fields.name = updates.name;
 
   try{
     

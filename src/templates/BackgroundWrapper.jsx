@@ -5,14 +5,11 @@ const BackgroundWrapper = ({ children }) => {
   const { user } = useAuth();
 
   const getBackgroundColor = () => user?.backgroundColor || localStorage.getItem('backgroundColor') || '#ffffff';
-  const getBackgroundImage = () => user?.backgroundImage || localStorage.getItem('backgroundImage') || '';
 
   const [color, setColor] = useState(getBackgroundColor());
-  const [image, setImage] = useState(getBackgroundImage());
 
   useEffect(() => {
     setColor(getBackgroundColor());
-    setImage(getBackgroundImage());
   }, [user]);
 
   return (
@@ -21,10 +18,6 @@ const BackgroundWrapper = ({ children }) => {
       <div
         style={{
           backgroundColor: color,
-          backgroundImage: image ? `url(${image})` : 'none',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
           position: 'fixed',
           top: 0,
           left: 0,
@@ -33,6 +26,7 @@ const BackgroundWrapper = ({ children }) => {
           width: '100vw',
           height: '100vh',
           zIndex: -1,
+          pointerEvents: 'none',
         }}
       />
 

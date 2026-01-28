@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer, useEffect, useRef } from 'react'
 import { useAuth } from './AuthContext';
 import { updateChildTime } from '../api/firebaseUser';
 import { getUserData  } from '../api/firebaseUser';
-
+import {withdrawTime, withdrawTimeStop} from '../api/firebaseTasks'
 const ScreenTimeContext = createContext();
 
 const initialState = {
@@ -53,31 +53,7 @@ export const ScreenTimeProvider = ({ children }) => {
   const debounceRef = useRef(null);
 
   // 🔁 Debounced Firestore update
-  const updateScreenTimeInFirestore = (newTotal, newPending) => {
-    if (!user?.uid || !user?.token) return;
-
-    // Avoid unnecessary writes
-    if (
-      newTotal === lastWrittenRef.current.totalScreenTime &&
-      newPending === lastWrittenRef.current.pendingScreenTime
-    ) {
-      return;
-    }
-
-    clearTimeout(debounceRef.current);
-
-    debounceRef.current = setTimeout(async () => {
-      try {
-        await updateChildTime(newTotal, newPending, user.token);
-        lastWrittenRef.current = {
-          totalScreenTime: newTotal,
-          pendingScreenTime: newPending,
-        };
-      } catch (err) {
-        console.error('❌ Failed to update Firestore:', err);
-      }
-    }, 500); // ⏳ Wait 500ms before firing
-  };
+  
 
 
   const refreshScreenTime = async () => {
@@ -85,45 +61,59 @@ export const ScreenTimeProvider = ({ children }) => {
 
     try {
       const fields = await getUserData(user.uid, user.token);
-
+      console.log("total_fields: ", fields.totalTime);
+      console.log("pending_fields: ", fields.pendingTime);
       // Parse Firestore document fields safely
-      const total = fields?.totalTime?.doubleValue
-        ? parseFloat(fields.totalTime.doubleValue)
-        : 0;
-      const pending = fields?.pendingTime?.doubleValue
-        ? parseFloat(fields.pendingTime.doubleValue)
-        : 0;
-
       dispatch({
         type: 'INIT',
         payload: {
-          totalScreenTime: total,
-          pendingScreenTime: pending,
+          totalScreenTime: fields.totalTime,
+          pendingScreenTime: fields.pendingTime,
         },
       });
 
-      lastWrittenRef.current = {
-        totalScreenTime: total,
-        pendingScreenTime: pending,
-      };
+     
     } catch (err) {
       console.error('❌ Failed to refresh screen time:', err);
     }
   };
 
 
-
+  const withdrawScreenTimeStop = async () => {
+    try {
+      await withdrawTimeStop(user.token);
+      // Refresh state from backend after successful stop
+      await refreshScreenTime();
+    } catch (error) {
+      console.error('Failed to stop time:', error);
+      throw error;
+    }
+  };
 
   const withdrawScreenTime = async (minutes) => {
-    const newTotal = Math.max(0, state.totalScreenTime - minutes);
-    dispatch({ type: 'WITHDRAW', payload: minutes });
-    updateScreenTimeInFirestore(newTotal, state.pendingScreenTime);
+    try {
+      // Optimistically update local state
+      dispatch({ type: 'WITHDRAW', payload: minutes });
+      
+      // Call backend API
+      const res = await withdrawTime(user.uid, minutes, user.token);
+      
+      // Refresh state from backend to ensure consistency
+      await refreshScreenTime();
+      
+      return res;
+    } catch (error) {
+      // If API call fails, refresh to restore correct state
+      await refreshScreenTime();
+      console.error('Failed to withdraw time:', error);
+      throw error;
+    }
   };
 
   const addToPendingScreenTime = async (minutes) => {
     const newPending = state.pendingScreenTime + minutes;
     dispatch({ type: 'ADD_PENDING', payload: minutes });
-    updateScreenTimeInFirestore(state.totalScreenTime, newPending);
+    
   };
 
   const approvePendingScreenTime = async () => {
@@ -132,7 +122,14 @@ export const ScreenTimeProvider = ({ children }) => {
     updateScreenTimeInFirestore(newTotal, 0);
   };
 
-  // 🧠 Load from user data only once
+  // 🧠 Fetch time data from backend when user logs in
+  useEffect(() => {
+    if (user?.uid && user?.token) {
+      refreshScreenTime();
+    }
+  }, [user?.uid, user?.token]);
+
+  // 🧠 Load from user data only once (fallback)
   useEffect(() => {
     if (user && state.loading) {
       if (user?.totalTime !== undefined && user?.pendingTime !== undefined) {
@@ -163,6 +160,7 @@ export const ScreenTimeProvider = ({ children }) => {
         approvePendingScreenTime,
         withdrawScreenTime,
         refreshScreenTime,
+        withdrawScreenTimeStop,
       }}
     >
       {children}

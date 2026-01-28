@@ -1,0 +1,89 @@
+.task-list-card {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075), 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.task-list-card-header {
+  background-color: #0d6efd;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 1.5rem 1.5rem 0 0;
+  flex-shrink: 0;
+  padding: 0.75rem 1.25rem;
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.task-list-card-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 1rem;
+  padding-right: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .task-list-card {
+    max-height: calc(100vh - 80px);
+    border-radius: 1rem;
+  }
+
+  .task-list-card-header {
+    padding: 0.625rem 1rem;
+    font-size: 1.1rem;
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  .task-list-card-body {
+    padding: 0.75rem;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .task-list-card {
+    max-height: calc(100vh - 90px);
+    border-radius: 1.25rem;
+  }
+
+  .task-list-card-header {
+    padding: 0.6875rem 1.125rem;
+    font-size: 1.15rem;
+    border-radius: 1.25rem 1.25rem 0 0;
+  }
+
+  .task-list-card-body {
+    padding: 0.875rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .task-list-card {
+    max-height: calc(100vh - 95px);
+  }
+}
+
+/* Ensure proper scrolling on all devices */
+.task-list-card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.task-list-card-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.task-list-card-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.task-list-card-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

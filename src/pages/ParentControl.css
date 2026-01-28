@@ -1,0 +1,588 @@
+/* Page Header Styling - Professional Parent Design */
+.page-header {
+    font-weight: 700;
+    font-size: 2.25rem;
+    margin-bottom: 2.5rem;
+    margin-top: 0.5rem;
+    padding: 1.25rem 0 1.25rem 0;
+    text-align: left;
+    color: #1a202c;
+    position: relative;
+    letter-spacing: -0.025em;
+    border-bottom: 3px solid #2d3748;
+    background: linear-gradient(to right, #f7fafc 0%, #ffffff 100%);
+    padding-left: 1.5rem;
+    margin-left: -1.5rem;
+    padding-right: 1.5rem;
+    margin-right: -1.5rem;
+    border-radius: 0;
+}
+
+.page-header::after {
+    display: none;
+}
+
+.clickable-card {
+    cursor: pointer;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.modal-card {
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 2px solid #007bff;
+}
+
+.modal-card-body {
+    padding: 2rem;
+}
+
+/* Apps/Sites modal: scrollable list + sticky save section */
+.apps-sites-modal-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 60vh;
+}
+
+.apps-sites-checklist {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+}
+
+.apps-sites-checklist h3 {
+    margin-bottom: 1rem;
+}
+
+.apps-sites-checklist > div {
+    margin-bottom: 0.35rem;
+}
+
+.apps-sites-save-section {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem 0 0;
+    margin-top: 0.5rem;
+    border-top: 2px solid #e2e8f0;
+    background: #fff;
+}
+
+.apps-sites-save-section .btn {
+    flex: 1;
+    min-width: 140px;
+}
+
+.time-control-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.time-amount-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.time-amount-box {
+    min-width: 80px;
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.save-time-button {
+    width: 100%;
+}
+
+.days-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-bottom: 10px;
+}
+
+.days-selection button {
+    margin: 2px;
+}
+
+.days-selection-special {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.days-selection-special button {
+    margin: 2px;
+}
+
+.current-selection {
+    margin-bottom: 15px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.time-input-container {
+    margin-bottom: 10px;
+}
+
+.time-input-container label {
+    font-weight: 500;
+}
+
+.time-input-container input {
+    width: 100px;
+    padding: 5px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.time-input-container input[type="time"] {
+    width: 120px;
+}
+
+.schedule-time-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.schedule-time-item div {
+    margin-bottom: 5px;
+}
+
+.schedule-time-list {
+    margin-top: 30px;
+}
+
+.cancel-edit-button {
+    margin-top: 10px;
+}
+
+/* Time Control Content Styling */
+.time-control-content {
+    max-width: 100%;
+}
+
+.time-control-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.control-section {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+}
+
+.control-section:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+    letter-spacing: -0.01em;
+}
+
+.control-screen-time-header {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+    padding: 0.875rem 0;
+    border-bottom: 2px solid #e2e8f0;
+    letter-spacing: -0.01em;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    margin-top: 20px;
+}
+
+.time-control-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 0;
+}
+
+.control-button {
+    flex: 1;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.control-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.control-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.time-amount-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.time-adjust-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.time-adjust-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.time-amount-box {
+    min-width: 100px;
+    text-align: center;
+    padding: 12px 20px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #007bff;
+}
+
+.days-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+    justify-content: center;
+}
+
+.day-button {
+    min-width: 50px;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.day-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.days-selection-special {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.special-day-button {
+    min-width: 90px;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.special-day-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.time-input-container {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.time-input-container label {
+    font-weight: 500;
+    color: #495057;
+    margin-right: 10px;
+}
+
+.time-input-container input {
+    width: 120px;
+    padding: 8px 12px;
+    border: 2px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.time-input-container input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.save-time-button {
+    width: 100%;
+    padding: 10px;
+    font-weight: 500;
+    margin-top: 10px;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.save-time-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.schedule-time-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.schedule-time-item {
+    padding: 15px;
+    margin-bottom: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.schedule-time-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-time-info {
+    margin-bottom: 0;
+}
+
+.schedule-time-info div {
+    margin-bottom: 6px;
+    color: #495057;
+}
+
+.schedule-time-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.action-button {
+    flex: 0 0 auto;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.schedule-time-list {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+}
+
+/* Daily Times Grid Layout */
+.daily-times-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.daily-times-days-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.daily-times-values-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.daily-time-day-cell {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.daily-time-value-cell {
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    min-height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+.daily-time-value-cell div {
+    margin: 0;
+}
+
+/* Child Selector Styling */
+.child-selector-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.child-selector-label {
+    font-weight: 600;
+    color: #495057;
+    margin: 0;
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+.child-selector {
+    flex: 1;
+    min-width: 200px;
+    max-width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.child-selector:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Mobile adjustments for child selector */
+@media (max-width: 767px) {
+    .child-selector-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .child-selector-label {
+        min-width: auto;
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+
+    .child-selector {
+        min-width: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Quick Action Cards */
+.quick-action-card {
+    height: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.quick-action-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Card Explanations */
+.card-explanation {
+    margin-top: 15px;
+    margin-bottom: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    padding-top: 10px;
+    border-top: 1px solid #e9ecef;
+}
+
+.clickable-card .card-explanation {
+    margin-top: 10px;
+}
+
+.clickable-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+}
+
+.clickable-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

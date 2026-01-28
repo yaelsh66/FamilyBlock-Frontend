@@ -1,10 +1,10 @@
 // src/components/TasksList.jsx
 import React, { useEffect, useState } from 'react';
-import { Container, Spinner, Alert, ListGroup } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 
 import TaskItem from './TaskItem';
 import { useTaskContext } from '../context/TaskContext';
+import './TasksList.css';
 
 function TasksList() {
   const { allFamilyTasks: tasks, updateTask} = useTaskContext();
@@ -30,36 +30,44 @@ function TasksList() {
 
   if (loading) {
     return (
-      <Container className="mt-5 text-center">
-        <Spinner animation="border" />
-      </Container>
+      <div className="tasks-list-container-center">
+        <span className="tasks-list-spinner"></span>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <Container className="mt-5">
-        <Alert variant="warning">🚫 Please log in to view tasks.</Alert>
-      </Container>
+      <div className="tasks-list-container">
+        <div className="tasks-list-alert tasks-list-alert-warning">
+          🚫 Please log in to view tasks.
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container className="mt-5" >
-      <h2 className="mb-4">📋 Task List</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {tasks.length === 0 ? (
-        <Alert variant="info">No tasks available yet.</Alert>
-      ) : (
-        <ListGroup>
-          {tasks.map((task, idx) => (
-            <ListGroup.Item key={idx}>
-              <TaskItem task={task} onStartUpdate={handleUpdateTask} />
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
+    <div className="tasks-list-container">
+      <h2 className="tasks-list-title">📋 Task List</h2>
+      {error && (
+        <div className="tasks-list-alert tasks-list-alert-danger">
+          {error}
+        </div>
       )}
-    </Container>
+      {tasks.length === 0 ? (
+        <div className="tasks-list-alert tasks-list-alert-info">
+          No tasks available yet.
+        </div>
+      ) : (
+        <ul className="tasks-list-group">
+          {tasks.map((task, idx) => (
+            <li key={idx} className="tasks-list-item">
+              <TaskItem task={task} onStartUpdate={handleUpdateTask} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

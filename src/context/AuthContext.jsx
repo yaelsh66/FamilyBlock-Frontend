@@ -22,9 +22,7 @@ function authReducer(state, action) {
 
     case 'LOGOUT': {
       localStorage.removeItem('user');
-      localStorage.removeItem('backgroundImage');
       localStorage.removeItem('backgroundColor');
-      document.body.style.backgroundImage = 'none';
       document.body.style.backgroundColor = 'transparent';
       return { user: null, loading: false };
     }
@@ -45,7 +43,6 @@ function authReducer(state, action) {
     case 'UPDATE_BACKGROUND': {
       const userWithNewBackground = {
         ...state.user,
-        backgroundImage: action.payload.backgroundImage,
         backgroundColor: action.payload.backgroundColor,
       };
       localStorage.setItem('user', JSON.stringify(userWithNewBackground));
@@ -70,55 +67,59 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  if (!storedUser?.refreshToken) return; // Don't even set the interval if no refresh token
-
-  let isMounted = true;
-
-  const refresh = async () => {
-    try {
-      const refreshed = await refreshIdToken(storedUser.refreshToken);
-
-      if (!isMounted) return;
-
-      // Avoid unnecessary state updates if token hasn't changed
-      if (
-        refreshed.id_token !== storedUser.token ||
-        refreshed.refresh_token !== storedUser.refreshToken
-      ) {
-        const updatedUser = {
-          ...storedUser,
-          token: refreshed.id_token,
-          refreshToken: refreshed.refresh_token,
-        };
-
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        dispatch({
-          type: 'REFRESH',
-          payload: {
-            idToken: refreshed.id_token,
-            refreshToken: refreshed.refresh_token,
-          },
-        });
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (!storedUser?.refreshToken) return; // Don't even set the interval if no refresh token
+  
+    let isMounted = true;
+  
+    const refresh = async () => {
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      if (!currentUser?.refreshToken) {
+        if (isMounted) dispatch({ type: 'LOGOUT' });
+        return;
       }
-    } catch (err) {
-      console.error('🔁 Failed to refresh token:', err);
-      if (isMounted) dispatch({ type: 'LOGOUT' }); // Logout on refresh failure
-    }
-  };
-
-  const refreshInterval = setInterval(refresh, 55 * 60 * 1000); // every 55 minutes
-
-  // Optional: refresh once on load if needed
-  // refresh();
-
-  return () => {
-    isMounted = false;
-    clearInterval(refreshInterval);
-  };
-}, []);
-
+      try {
+        const refreshed = await refreshIdToken(currentUser.refreshToken);
+  
+        if (!isMounted) return;
+  
+        // Avoid unnecessary state updates if token hasn't changed
+        if (
+          refreshed.id_token !== currentUser.token ||
+          refreshed.refresh_token !== currentUser.refreshToken
+        ) {
+          const updatedUser = {
+            ...currentUser,
+            token: refreshed.id_token,
+            refreshToken: refreshed.refresh_token,
+          };
+  
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          dispatch({
+            type: 'REFRESH',
+            payload: {
+              idToken: refreshed.id_token,
+              refreshToken: refreshed.refresh_token,
+            },
+          });
+        }
+      } catch (err) {
+        console.error('🔁 Failed to refresh token:', err);
+        if (isMounted) dispatch({ type: 'LOGOUT' }); // Logout on refresh failure
+      }
+    };
+  
+    // Refresh immediately on mount to ensure token is fresh
+    refresh();
+  
+    // Then refresh every 50 minutes (10 minutes before 1-hour expiration)
+    const refreshInterval = setInterval(refresh, 50 * 60 * 1000);
+  
+    return () => {
+      isMounted = false;
+      clearInterval(refreshInterval);
+    };
+  }, []);
 
   // Load user from localStorage on mount
   useEffect(() => {

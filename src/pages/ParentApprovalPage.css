@@ -1,0 +1,117 @@
+/* Page Header Styling - Professional Parent Design */
+.approval-page-header {
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  padding: 0.875rem 0;
+  text-align: left;
+  color: #2d3748;
+  position: relative;
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Card Styling - Professional Parent Design */
+.approval-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.approval-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: #cbd5e0;
+}
+
+.approval-card-header {
+  background-color: #2d3748;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: none;
+  letter-spacing: 0.01em;
+}
+
+.approval-card-body {
+  padding: 1.5rem;
+  flex: 1;
+  background-color: #ffffff;
+  border-top: 1px solid #f7fafc;
+}
+
+.approval-card-footer {
+  background-color: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.time-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  font-size: 0.95rem;
+  transition: none;
+}
+
+.time-info strong {
+  font-weight: 600;
+  color: #4a5568;
+  letter-spacing: 0.01em;
+}
+
+.time-value {
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.total-time {
+  background-color: transparent;
+  border-left: none;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.875rem;
+}
+
+.total-time:last-of-type {
+  border-bottom: none;
+}
+
+.total-time strong {
+  color: #2d3748;
+}
+
+.total-time .time-value {
+  color: #2d3748;
+  background-color: #edf2f7;
+  border: 1px solid #cbd5e0;
+}
+
+.pending-time {
+  background-color: transparent;
+  border-left: none;
+}
+
+.pending-time strong {
+  color: #2d3748;
+}
+
+.pending-time .time-value {
+  color: #c05621;
+  background-color: #feebc8;
+  border: 1px solid #f6ad55;
+}

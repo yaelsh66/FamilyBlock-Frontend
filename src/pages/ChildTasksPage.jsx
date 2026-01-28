@@ -1,40 +1,35 @@
 // src/pages/ChildTasksPage.jsx
 import React, { useContext, useState, useEffect} from 'react';
-import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { useAuth } from '../context/AuthContext';
 import TaskDraggable from '../components/TaskDraggable';
 import AmountBox from '../components/AmountBox';
 import { useScreenTime } from '../context/ScreenTimeContext';
 import { useTaskContext } from '../context/TaskContext';
-import { getParentsByFamily, submitCompletion } from '../api/firebaseTasks';
+import { submitCompletion } from '../api/firebaseTasks';
+import { Modal, Form, FloatingLabel, Button } from 'react-bootstrap';
 import './ChildTasksPage.css'
 
 
 function ChildTasksPage() {
   const { user, loading } = useAuth();
-  const [parents, setParents] = useState([]);
+  
 
   const {
     assignedTasks,
     availableTasks,
     reassignTaskOptimistic,
+    refreshTasks,
   } = useTaskContext();
   
   const { addToPendingScreenTime } = useScreenTime();
   const [error, setError] = useState('');
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [comment, setComment] = useState('');
 
   const assignedTotal = assignedTasks.reduce((sum, task) => sum + (task.time || 0), 0);
 
-  useEffect(() => {
-      if (!user?.familyId || !user?.token) return;
-
-      getParentsByFamily(user.familyId, user.token)
-        .then(setParents)
-        .catch((e) => {
-          console.error('Error fetching parents', e);
-        });
-    }, [user]);
 
 
   const onDragEnd = async (result) => {
@@ -61,8 +56,7 @@ function ChildTasksPage() {
 
   const newAssignedTo =
     destination.droppableId === 'assigned'
-      ? [...(movedTask.assignedTo || []), user.uid]
-      : (movedTask.assignedTo || []).filter((uid) => uid !== user.uid);
+      ? user.uid : null;
 
   try {
     await reassignTaskOptimistic(movedTask.id, newAssignedTo, {
@@ -75,112 +69,152 @@ function ChildTasksPage() {
   }
 };
 
-const handleComplete = async (task) => {
-  // 1. Optimistically remove the task from assignedTasks immediately
+const handleComplete = (task) => {
+  setSelectedTask(task);
+  setComment('');
+  setShowCommentModal(true);
+};
+
+const handleCommentSubmit = async () => {
+  if (!selectedTask) return;
+  
   try {
-    // Update UI instantly by removing user from task assignment locally
-    const newAssignedTo = (task.assignedTo || []).filter(uid => uid !== user.uid);
-
-    // Use optimistic UI update function from context (or fallback)
-    await reassignTaskOptimistic(task.id, newAssignedTo, {
-      newAssigned: assignedTasks.filter(t => t.id !== task.id),
-      newAvailable: availableTasks, // assuming task doesn't move to available here
-    });
-
-    // 2. Call backend to submit completion
-    await submitCompletion(task, user);
+    // 2. Call backend to submit completion with comment
+    await submitCompletion(selectedTask.id, comment, user.token);
 
     // 3. Update pending screen time
-    await addToPendingScreenTime(task.time);
+    await addToPendingScreenTime(selectedTask.time);
 
-    alert(`✅ Task "${task.title}" marked as completed! Waiting for approval.`);
+    // 4. Refresh the task list to remove the completed task
+    await refreshTasks();
+
+    setShowCommentModal(false);
+    setSelectedTask(null);
+    setComment('');
+    alert(`✅ Task "${selectedTask.title}" marked as completed! Waiting for approval.`);
   } catch (error) {
     console.error('Failed to mark task as completed:', error);
     alert('❌ Failed to complete task. Try again later.');
-
-    // Optional: revert UI if needed (e.g., re-add task back)
-    // Here you can refetch tasks or add the task back manually
   }
+};
+
+const handleCommentModalClose = () => {
+  setShowCommentModal(false);
+  setSelectedTask(null);
+  setComment('');
 };
 
 
 
   if (loading) {
     return (
-      <Container className="mt-5 text-center">
-        <Spinner animation="border" />
-      </Container>
+      <div className="child-tasks-container-center">
+        <span className="child-tasks-spinner"></span>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <Container className="mt-5">
-        <Alert variant="warning">🚫 Please log in.</Alert>
-      </Container>
+      <div className="child-tasks-container">
+        <div className="child-tasks-alert child-tasks-alert-warning">
+          🚫 Please log in.
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container className="mt-5">
-      <h2 className="mb-4">👦 {user.nickname}'s Tasks</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
+    <div className="child-tasks-container">
+      <h2 className="child-tasks-title">👦 {user.nickname}'s Tasks</h2>
+      {error && (
+        <div className="child-tasks-alert child-tasks-alert-danger">
+          {error}
+        </div>
+      )}
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <Row>
-          <Col md={6}>
-            
+        <div className="child-tasks-row">
+          <div className="child-tasks-col">
+            <div className="assigned-tasks-header">
               <h4>Assigned Tasks</h4>
-              <Droppable droppableId="assigned">
-                {(provided) => (
-                  <div className='task-column' ref={provided.innerRef} {...provided.droppableProps}>
-                    {assignedTasks.map((task, idx) => (
-                      <TaskDraggable
-                        key={task.id}
-                        task={task}
-                        index={idx}
-                        isAssigned={true}
-                        onComplete={handleComplete}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-           
-          </Col>
+              <AmountBox
+                label="Future Potential"
+                time={assignedTotal}
+                variant="info"
+                size="small"
+                icon="💡"
+              />
+            </div>
+            <Droppable droppableId="assigned">
+              {(provided) => (
+                <div className='task-column' ref={provided.innerRef} {...provided.droppableProps}>
+                  {assignedTasks.map((task, idx) => (
+                    <TaskDraggable
+                      key={task.id}
+                      task={task}
+                      index={idx}
+                      isAssigned={true}
+                      onComplete={handleComplete}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
 
-          <Col md={6}>
-            
-              <h4>Available Tasks</h4>
-              <Droppable droppableId="available">
-                {(provided) => (
-                  <div className='task-column' ref={provided.innerRef} {...provided.droppableProps}>
-                    {availableTasks.map((task, idx) => (
-                      <TaskDraggable
-                        key={task.id}
-                        task={task}
-                        index={idx}
-                        isAssigned={false}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            
-          </Col>
-        </Row>
+          <div className="child-tasks-col">
+            <h4>Available Tasks</h4>
+            <Droppable droppableId="available">
+              {(provided) => (
+                <div className='task-column' ref={provided.innerRef} {...provided.droppableProps}>
+                  {availableTasks.map((task, idx) => (
+                    <TaskDraggable
+                      key={task.id}
+                      task={task}
+                      index={idx}
+                      isAssigned={false}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
+        </div>
       </DragDropContext>
 
-      <AmountBox
-        label="Future Potential"
-        time={assignedTotal}
-        variant="info"
-        size="large"
-        icon="💡"
-      />
-    </Container>
+      {/* Comment Modal */}
+      <Modal show={showCommentModal} onHide={handleCommentModalClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Complete Task</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-3">
+            <strong>Task:</strong> {selectedTask?.title}
+          </p>
+          <FloatingLabel controlId="comment" label="Add a comment (optional)">
+            <Form.Control
+              as="textarea"
+              placeholder="Enter your comment here..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={4}
+              style={{ minHeight: '100px' }}
+            />
+          </FloatingLabel>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCommentModalClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleCommentSubmit}>
+            Complete Task
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 }
 
