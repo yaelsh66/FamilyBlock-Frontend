@@ -1,5 +1,5 @@
 // src/pages/ChildTasksPage.jsx
-import React, { useContext, useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { useAuth } from '../context/AuthContext';
 import TaskDraggable from '../components/TaskDraggable';
@@ -7,8 +7,7 @@ import AmountBox from '../components/AmountBox';
 import { useScreenTime } from '../context/ScreenTimeContext';
 import { useTaskContext } from '../context/TaskContext';
 import { submitCompletion } from '../api/firebaseTasks';
-import { Modal, Form, FloatingLabel, Button } from 'react-bootstrap';
-import './ChildTasksPage.css'
+import './ChildTasksPage.css';
 
 
 function ChildTasksPage() {
@@ -104,7 +103,13 @@ const handleCommentModalClose = () => {
   setComment('');
 };
 
-
+  useEffect(() => {
+    if (showCommentModal) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [showCommentModal]);
 
   if (loading) {
     return (
@@ -186,34 +191,53 @@ const handleCommentModalClose = () => {
       </DragDropContext>
 
       {/* Comment Modal */}
-      <Modal show={showCommentModal} onHide={handleCommentModalClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Complete Task</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p className="mb-3">
-            <strong>Task:</strong> {selectedTask?.title}
-          </p>
-          <FloatingLabel controlId="comment" label="Add a comment (optional)">
-            <Form.Control
-              as="textarea"
-              placeholder="Enter your comment here..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              rows={4}
-              style={{ minHeight: '100px' }}
-            />
-          </FloatingLabel>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCommentModalClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleCommentSubmit}>
-            Complete Task
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {showCommentModal && (
+        <div className="child-tasks-modal-overlay" onClick={handleCommentModalClose} role="presentation">
+          <div
+            className="child-tasks-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="child-tasks-modal-title"
+          >
+            <div className="child-tasks-modal-header">
+              <h3 id="child-tasks-modal-title" className="child-tasks-modal-title">Complete Task</h3>
+              <button
+                type="button"
+                className="child-tasks-modal-close"
+                onClick={handleCommentModalClose}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="child-tasks-modal-body">
+              <p className="child-tasks-modal-task-label">
+                <strong>Task:</strong> {selectedTask?.title}
+              </p>
+              <label htmlFor="child-tasks-comment" className="child-tasks-modal-label">
+                Add a comment (optional)
+              </label>
+              <textarea
+                id="child-tasks-comment"
+                className="child-tasks-modal-textarea"
+                placeholder="Enter your comment here..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows={4}
+              />
+            </div>
+            <div className="child-tasks-modal-footer">
+              <button type="button" className="child-tasks-modal-btn child-tasks-modal-btn-secondary" onClick={handleCommentModalClose}>
+                Cancel
+              </button>
+              <button type="button" className="child-tasks-modal-btn child-tasks-modal-btn-primary" onClick={handleCommentSubmit}>
+                Complete Task
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

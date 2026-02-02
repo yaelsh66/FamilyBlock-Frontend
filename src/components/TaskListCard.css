@@ -3,6 +3,7 @@
   border-radius: 1.5rem;
   border: 1px solid rgba(0, 0, 0, 0.125);
   max-height: calc(100vh - 100px);
+  width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -31,7 +32,18 @@
 /* Responsive adjustments */
 @media (max-width: 576px) {
   .task-list-card {
-    max-height: calc(100vh - 80px);
+    max-height: calc(100dvh - 80px);
+    width: 100%;
+    margin: 0;
+    border-radius: 1rem;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* If the card is used inside a Bootstrap column, ensure it spans full width */
+  .col-12 .task-list-card,
+  .col .task-list-card {
+    border-radius: 1rem 1rem 0 0;
     border-radius: 1rem;
   }
 

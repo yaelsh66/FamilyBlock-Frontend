@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const PROJECT_ID = 'family-c56e3';
 
-const BACKEND_BASE_URL2 = 'http://localhost:8081/api/task';
 const BACKEND_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/task`;    
 
 
@@ -52,7 +51,6 @@ export const updateTask = async (taskId, updates, idToken) => {
     console.error('❌   Failed to updateTask: ', error.message);
     throw error;
   }
-  const res = await axios.patch(url, payload, idToken)
 }
 
 export const deleteTaskBackend = async (taskId, idToken) => {
@@ -147,7 +145,6 @@ export const getPendingCompletionsForFamily = async (familyId, idToken) => {
     }
   });
   return res.data;
-  console.log("GET PENDING COMPLETIONS FOR FAMILY RESPONSE:", res.data);
 } catch (error) {
   console.error('❌ Failed to get pending completions for family:', error.message);
   throw error;
@@ -260,80 +257,4 @@ export const withdrawTimeStop = async (idToken) => {
       throw error;
     };
 }
-
-// 🔔 Create one weekly‐assignment doc for a single day
-export const createDailyAssignment = async ({
-  familyId,
-  userId,
-  role,
-  title,
-  description,
-  screenTime,   // minutes
-  day,          // 0 = Sunday … 6 = Saturday
-  timeSlot      // "HH:MM"
-}, token) => {
-  // POST to /documents/weeklyAssignments to auto-generate doc ID
-  const url = `/weeklyAssignments`;
-  const payload = {
-    fields: {
-      familyId:    { stringValue: familyId },
-      userId:      { stringValue: userId },
-      role:        { stringValue: role },
-      title:       { stringValue: title },
-      description: { stringValue: description },
-      screenTime:  { integerValue: screenTime.toString() },
-      day:         { integerValue: day.toString() },
-      timeSlot:    { stringValue: timeSlot },
-      createdAt:   { timestampValue: new Date().toISOString() }
-    }
-  };
-  const res = await axiosInstance.post(url, payload, {
-    headers: authHeader(token),
-  });
-  return res.data;
-};
-
-export const deleteDailyAssignment = async (assignmentId, token) => {
-  return axiosInstance.delete(`/weeklyAssignments/${assignmentId}`, {
-    headers: authHeader(token)
-  });
-};
-
-// 🔍 Query weekly assignments for a single child
-export const getWeeklyAssignmentsForChild = async (childId, token) => {
-  // Firestore REST API runQuery
-  const url = ``;
-  const payload = {
-    structuredQuery: {
-      from: [{ collectionId: 'weeklyAssignments' }],
-      where: {
-        fieldFilter: {
-          field: { fieldPath: 'userId' },
-          op: 'EQUAL',
-          value: { stringValue: childId }
-        }
-      }
-    }
-  };
-
-  const response = await axiosInstance.post(url, payload, {
-    headers: authHeader(token)
-  });
-  return response.data
-    .filter(r => r.document)
-    .map(r => {
-      const f = r.document.fields;
-      return {
-        id:          r.document.name.split('/').pop(),
-        day:         parseInt(f.day.integerValue, 10),
-        timeSlot:    f.timeSlot.stringValue,
-        title:       f.title.stringValue,
-        description: f.description.stringValue,
-        screenTime:  parseInt(f.screenTime.integerValue, 10),
-        userId:      f.userId.stringValue,
-        role:        f.role.stringValue,
-        createdAt:   f.createdAt.timestampValue
-      };
-    });
-};
 

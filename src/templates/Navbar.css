@@ -43,8 +43,11 @@
   text-decoration: none !important;
   font-size: 1.1rem;
   font-weight: 600;
-  padding: 0.25rem 0;
-  transition: opacity 0.2s, background-color 0.2s;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 1px rgba(100, 149, 237, 0.2);
+  transition: opacity 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
   position: relative;
   z-index: 1052;
   pointer-events: auto;
@@ -58,6 +61,8 @@
   color: #fff !important;
   text-decoration: none !important;
   background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(100, 149, 237, 0.6);
+  box-shadow: 0 0 0 1px rgba(100, 149, 237, 0.4);
 }
 
 .navbar-brand:visited,
@@ -95,10 +100,10 @@
 .navbar-menu {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1.25rem;
   flex: 1;
   justify-content: space-between;
-  margin-left: 1rem;
+  margin-left: 1.25rem;
   position: relative;
   z-index: 10;
   pointer-events: auto;
@@ -109,7 +114,7 @@
 .navbar-nav {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
   flex-direction: row !important;
   position: relative;
@@ -132,9 +137,11 @@
 .nav-link {
   color: #fff !important;
   text-decoration: none !important;
-  padding: 0.35rem 0.75rem;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 1px rgba(100, 149, 237, 0.2);
+  transition: background-color 0.2s, color 0.2s, opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
   display: inline-block;
   white-space: nowrap;
   font-size: 0.9rem;
@@ -165,6 +172,8 @@
   color: #fff !important;
   text-decoration: none !important;
   opacity: 1 !important;
+  border-color: rgba(100, 149, 237, 0.6);
+  box-shadow: 0 0 0 1px rgba(100, 149, 237, 0.4);
 }
 
 .nav-link:visited {
@@ -228,13 +237,14 @@
 
 .dropdown-toggle {
   background: transparent;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 1px rgba(100, 149, 237, 0.2);
   color: #fff;
-  padding: 0.35rem 0.75rem;
-  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
   position: relative;
   z-index: 10003;
   pointer-events: auto;
@@ -242,6 +252,8 @@
 
 .dropdown-toggle:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(100, 149, 237, 0.6);
+  box-shadow: 0 0 0 1px rgba(100, 149, 237, 0.4);
 }
 
 .dropdown-menu {
@@ -486,13 +498,13 @@ a.dropdown-item span {
   .navbar-nav {
     flex-direction: row;
     width: 100%;
-    gap: 0.5rem;
+    gap: 1rem;
     flex-wrap: wrap;
   }
 
   .nav-link {
     width: auto;
-    padding: 0.35rem 0.75rem;
+    padding: 0.5rem 1rem;
     border-bottom: none;
     color: #fff !important;
     z-index: 10;
@@ -501,7 +513,7 @@ a.dropdown-item span {
   
   .nav-link-logout {
     width: auto;
-    padding: 0.35rem 0.75rem;
+    padding: 0.5rem 1rem;
     border-bottom: none;
   }
 

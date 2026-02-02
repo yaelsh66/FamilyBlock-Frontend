@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Spinner, Alert, Card, Button } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import './ParentControl.css';
 import { updateChildAppsApi, updateChildSitesApi, getChildAppsApi, getChildSitesApi } from '../api/deviceApi';
-import { updateDailyTimeApi, updateScheduleTimeApi, getDailyTimeApi, getScheduleTimesApi, deleteScheduleTimeApi } from '../api/timeControlApi';
+import TimeControl from '../components/TimeControl';
 function ParentControl({ selectedChildId, children = [], initialSection = null }) {
 
     const sites = [
         { id: 1, name: "Roblox", url: "roblox.com" },
-        { id: 2, name: "Online Games", url: ["coolmathgames.com", "friv.com", "y8.com", "kizi.com", "agame.com", "miniclip.com", "playhop.com",
-            "lagged.com", "mathplayground.com", "iogames.space", "iogames.fun", "solitaired.com", "247solitaire.com",
-            "worldofsolitaire.com", "cardgames.io", "arkadium.com", "freegames.org", "addictinggames.com", "crazygames.com", "poki.com"] },
+        { id: 2, name: "Online Games", url: ["coolmathgames.com", "friv.com", 
+            "y8.com", "kizi.com", "agame.com", "miniclip.com", "playhop.com",
+            "lagged.com", "mathplayground.com", "iogames.space", "iogames.fun", 
+            "solitaired.com", "247solitaire.com", "worldofsolitaire.com", 
+            "cardgames.io", "arkadium.com", "freegames.org", "addictinggames.com", 
+            "crazygames.com", "poki.com", "yo-yoo.co.il"] },
         { id: 3, name: "YouTube", url: ["youtube.com", "youtubekids.com"] },
         { id: 4, name: "Netflix", url: "netflix.com" },
         { id: 5, name: "TikTok", url: "tiktok.com" },
@@ -18,7 +20,8 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
     ];
     
     const apps = [
-        { id: 1, name: "Microsoft Games", processName: ["Solitaire.exe", "Minesweeper.exe", "Mahjong.exe", "Sudoku.exe", "BubbleBreaker.exe",
+        { id: 1, name: "Microsoft Games", processName: ["Solitaire.exe", 
+            "Minesweeper.exe", "Mahjong.exe", "Sudoku.exe", "BubbleBreaker.exe",
             "GameManagerService.exe", "Jigsaw.exe", "UltimateWordGames.exe"]},
         { id: 2, name: "Slack", processName: "slack.exe" },
         { id: 3, name: "Zoom", processName: "Zoom.exe" },
@@ -46,41 +49,10 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
         { id: 8, name: "Internet Explorer", processName: "iexplore.exe" }
     ];
     const { user, loading } = useAuth();
-    const [error, setError] = useState('');
     const [selectedAppIds, setSelectedAppIds] = useState([]);
     const [selectedSiteIds, setSelectedSiteIds] = useState([]);
     const [activeSection, setActiveSection] = useState(initialSection);
-    const [dailyTimeMinutes, setDailyTimeMinutes] = useState(30);
-    const [dailyTimeDays, setDailyTimeDays] = useState([]);
-    const [dailyTimes, setDailyTimes] = useState([]);
-    const [editingDailyTimeIndex, setEditingDailyTimeIndex] = useState(null);
-    const [scheduleTimes, setScheduleTimes] = useState([]);
-    const [scheduleTimeDays, setScheduleTimeDays] = useState([]);
-    const [scheduleTimeName, setScheduleTimeName] = useState('');
-    const [scheduleTimeStart, setScheduleTimeStart] = useState('22:00');
-    const [scheduleTimeEnd, setScheduleTimeEnd] = useState('06:00');
-    const [editingScheduleTimeIndex, setEditingScheduleTimeIndex] = useState(null);
     const [selectedChild, setSelectedChild] = useState(null);
-
-    const weekDays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-    const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
-    const weekend = ['FRIDAY', 'SATURDAY'];
-    
-    const fetchDailyTime = async () => {
-        if (!selectedChildId) {
-            
-            return;
-        }
-        try{
-            
-            setDailyTimes([]); // Clear the list before fetching
-            const dailyTimeList = await getDailyTimeApi(selectedChildId, user.token);
-            console.log('daily time list: ', dailyTimeList);
-            setDailyTimes(dailyTimeList);
-        }catch(error){
-            console.error('Failed to get daily time for child:', error);
-        }
-    }
     
     
     useEffect(() => {
@@ -139,19 +111,8 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
             }
         }
 
-        const fetchScheduleTimes = async () => {
-            try{
-                const scheduleTimeList = await getScheduleTimesApi(selectedChildId, user.token);
-                setScheduleTimes(scheduleTimeList);
-            }catch(error){
-                console.error('Failed to get schedule times for child:', error);
-            }
-        }
-
         fetchChildApps();
         fetchChildSites();
-        fetchDailyTime();
-        fetchScheduleTimes();
     }, [selectedChildId, user]);
 
     // Handle initialSection prop changes
@@ -215,26 +176,33 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
             <div className="apps-sites-checklist">
                 <h3>Choose Apps:</h3>
                 {[...apps].sort((a, b) => a.name.localeCompare(b.name)).map((app) => (
-                    <div key={app.id}>
+                    <label key={app.id} className="apps-sites-item">
                         <input
                             type="checkbox"
                             checked={selectedAppIds.includes(app.id)}
                             onChange={() => toggleApp(app.id)}
                         />
-                        {app.name}
-                    </div>
+                        <span className="apps-sites-item-label">{app.name}</span>
+                    </label>
                 ))}
             </div>
             <div className="apps-sites-save-section">
-                <Button onClick={handleSaveApps}>Save for All Children</Button>
-                {
-                    selectedChildId &&(  
-                        <Button key={selectedChildId} onClick={() => handleSaveAppsForChild(selectedChildId)}>
+                <button
+                    type="button"
+                    className="btn btn-primary apps-sites-save-button"
+                    onClick={handleSaveApps}
+                >
+                    Save for All Children
+                </button>
+                {selectedChildId && selectedChild && (
+                    <button
+                        type="button"
+                        className="btn btn-secondary apps-sites-save-button"
+                        onClick={() => handleSaveAppsForChild(selectedChildId)}
+                    >
                         Save for {selectedChild.nickname || selectedChild.email || selectedChild.uid}
-                    </Button>
-                    )
-                }
-                
+                    </button>
+                )}
             </div>
         </div>
     );
@@ -265,23 +233,33 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
             <div className="apps-sites-checklist">
                 <h3>Choose Sites:</h3>
                 {[...sites].sort((a, b) => a.name.localeCompare(b.name)).map((site) => (
-                    <div key={site.id}>
+                    <label key={site.id} className="apps-sites-item">
                         <input
                             type="checkbox"
                             checked={selectedSiteIds.includes(site.id)}
                             onChange={() => toggleSite(site.id)}
                         />
-                        {site.name}
-                    </div>
+                        <span className="apps-sites-item-label">{site.name}</span>
+                    </label>
                 ))}
             </div>
             <div className="apps-sites-save-section">
-                <Button onClick={handleSaveSites}>Save for All Children</Button>
-                {children.map((child) => (
-                    <Button key={child.uid} onClick={() => handleSaveSitesForChild(child.id)}>
-                        Save for {child.nickname || child.email || child.uid}
-                    </Button>
-                ))}
+                <button
+                    type="button"
+                    className="btn btn-primary apps-sites-save-button"
+                    onClick={handleSaveSites}
+                >
+                    Save for All Children
+                </button>
+                {selectedChildId && selectedChild && (
+                    <button
+                        type="button"
+                        className="btn btn-secondary apps-sites-save-button"
+                        onClick={() => handleSaveSitesForChild(selectedChildId)}
+                    >
+                        Save for {selectedChild.nickname || selectedChild.email || selectedChild.uid}
+                    </button>
+                )}
             </div>
         </div>
     );
@@ -305,457 +283,53 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
         }
     };
 
-    const renderTimeControlContent = () => (
-        <div className="time-control-content">
-            <h3 className="time-control-title">Time Control</h3>
-            
-            {/* Daily Time Section */}
-            <div className="control-section">
-                <h5 className="section-title">Choose Daily Time</h5>
-                <div className="days-selection">
-                    {weekDays.map((day) => (
-                        <Button
-                            key={day}
-                            variant={dailyTimeDays.includes(day) ? "primary" : "outline-primary"}
-                            size="sm"
-                            onClick={() => handleToggleDay(day)}
-                            className="day-button"
-                        >
-                            {day.substring(0, 3)}
-                        </Button>
-                    ))}
-                </div>
-                <div className="days-selection-special">
-                    <Button
-                        variant={dailyTimeDays.length === 7 ? "primary" : "outline-secondary"}
-                        size="sm"
-                        onClick={handleSelectAll}
-                        className="special-day-button"
-                    >
-                        All
-                    </Button>
-                    <Button
-                        variant={weekdays.every(day => dailyTimeDays.includes(day)) ? "primary" : "outline-secondary"}
-                        size="sm"
-                        onClick={handleSelectWeekdays}
-                        className="special-day-button"
-                    >
-                        Weekdays
-                    </Button>
-                    <Button
-                        variant={weekend.every(day => dailyTimeDays.includes(day)) ? "primary" : "outline-secondary"}
-                        size="sm"
-                        onClick={handleSelectWeekend}
-                        className="special-day-button"
-                    >
-                        Weekend
-                    </Button>
-                </div>
-                <div className="time-input-container">
-                    <label htmlFor="daily-time-input">Time (minutes): </label>
-                    <input
-                        id="daily-time-input"
-                        type="number"
-                        min="0"
-                        value={dailyTimeMinutes}
-                        onChange={(e) => setDailyTimeMinutes(parseInt(e.target.value) || 0)}
-                    />
-                </div>
-                <Button onClick={handleSaveDailyTime} className="save-time-button">
-                    {editingDailyTimeIndex !== null ? 'Update' : 'Save'}
-                </Button>
-                {editingDailyTimeIndex !== null && (
-                    <Button 
-                        variant="secondary" 
-                        onClick={handleCancelEditDailyTime}
-                        className="save-time-button cancel-edit-button"
-                    >
-                        Cancel
-                    </Button>
-                )}
-                
-                {dailyTimes.length > 0 && (
-                    <div className="schedule-time-list">
-                        <h5 className="section-subtitle">Existing Daily Times</h5>
-                        <div className="daily-times-grid">
-                            <div className="daily-times-days-row">
-                                {weekDays.map((day) => {
-                                    const dayShortcut = day.substring(0, 3);
-                                    return (
-                                        <div key={day} className="daily-time-day-cell">
-                                            <strong>{dayShortcut}</strong>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            <div className="daily-times-values-row">
-                                {weekDays.map((day) => {
-                                    // Find all daily time entries that include this day
-                                    const dayEntries = dailyTimes
-                                        .filter(dt => dt.days && dt.days.includes(day));
-                                    
-                                    return (
-                                        <div key={day} className="daily-time-value-cell">
-                                            {dayEntries.length > 0 ? (
-                                                dayEntries.map((dt, entryIndex) => (
-                                                    <div key={entryIndex}>
-                                                        {dt.time || 0} min
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div>-</div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Schedule Time Section */}
-            <div className="control-section">
-                <h5 className="section-title">Schedule Block</h5>
-                <div className="days-selection">
-                    {weekDays.map((day) => (
-                        <Button
-                            key={day}
-                            variant={scheduleTimeDays.includes(day) ? "primary" : "outline-primary"}
-                            size="sm"
-                            onClick={() => handleToggleScheduleTimeDay(day)}
-                            className="day-button"
-                        >
-                            {day.substring(0, 3)}
-                        </Button>
-                    ))}
-                </div>
-                <div className="days-selection-special">
-                    <Button
-                        variant={scheduleTimeDays.length === 7 ? "primary" : "outline-secondary"}
-                        size="sm"
-                        onClick={handleSelectAllScheduleTime}
-                        className="special-day-button"
-                    >
-                        All
-                    </Button>
-                    <Button
-                        variant={weekdays.every(day => scheduleTimeDays.includes(day)) ? "primary" : "outline-secondary"}
-                        size="sm"
-                        onClick={handleSelectWeekdaysScheduleTime}
-                        className="special-day-button"
-                    >
-                        Weekdays
-                    </Button>
-                    <Button
-                        variant={weekend.every(day => scheduleTimeDays.includes(day)) ? "primary" : "outline-secondary"}
-                        size="sm"
-                        onClick={handleSelectWeekendScheduleTime}
-                        className="special-day-button"
-                    >
-                        Weekend
-                    </Button>
-                </div>
-                <div className="schedule-time-inputs">
-                    <div className="time-input-container">
-                        <label htmlFor="schedule-time-start">Start Time: </label>
-                        <input
-                            id="schedule-time-start"
-                            type="time"
-                            value={scheduleTimeStart}
-                            onChange={(e) => setScheduleTimeStart(e.target.value)}
-                        />
-                    </div>
-                    <div className="time-input-container">
-                        <label htmlFor="schedule-time-end">End Time: </label>
-                        <input
-                            id="schedule-time-end"
-                            type="time"
-                            value={scheduleTimeEnd}
-                            onChange={(e) => setScheduleTimeEnd(e.target.value)}
-                        />
-                    </div>
-                </div>
-                <Button onClick={handleSaveScheduleTime} className="save-time-button">
-                    {editingScheduleTimeIndex !== null ? 'Update' : 'Save'}
-                </Button>
-                {editingScheduleTimeIndex !== null && (
-                    <Button 
-                        variant="secondary" 
-                        onClick={handleCancelEditScheduleTime}
-                        className="save-time-button cancel-edit-button"
-                    >
-                        Cancel
-                    </Button>
-                )}
-                
-                {scheduleTimes.length > 0 && (
-                    <div className="schedule-time-list">
-                        <h5 className="section-subtitle">Existing Schedule Times</h5>
-                        {scheduleTimes.map((st, index) => (
-                            <div key={index} className="schedule-time-item">
-                                <div className="schedule-time-info">
-                                    <div><strong>Days:</strong> {st.days.join(', ') || 'None'}</div>
-                                    <div><strong>Start:</strong> {st.startTime}</div>
-                                    <div><strong>End:</strong> {st.endTime}</div>
-                                </div>
-                                <div className="schedule-time-actions">
-                                    <Button
-                                        variant="danger"
-                                        size="sm"
-                                        onClick={() => handleDeleteScheduleTime(index)}
-                                        className="action-button"
-                                    >
-                                        Delete
-                                    </Button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-
-
-    const handleToggleDay = (day) => {
-        setDailyTimeDays(prev => 
-            prev.includes(day) 
-                ? prev.filter(d => d !== day)
-                : [...prev, day].sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b))
-        );
-    };
-
-    const handleSelectAll = () => {
-        // Toggle: if all days are selected, deselect all; otherwise select all
-        if (dailyTimeDays.length === 7) {
-            setDailyTimeDays([]);
-        } else {
-            setDailyTimeDays([...weekDays]);
-        }
-    };
-
-    const handleSelectWeekdays = () => {
-        // Toggle: if all weekdays are selected, deselect them; otherwise select all weekdays
-        const isWeekdaysSelected = weekdays.every(day => dailyTimeDays.includes(day));
-        if (isWeekdaysSelected) {
-            setDailyTimeDays(prev => prev.filter(day => !weekdays.includes(day)));
-        } else {
-            setDailyTimeDays(prev => {
-                const withoutWeekdays = prev.filter(day => !weekdays.includes(day));
-                return [...withoutWeekdays, ...weekdays].sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b));
-            });
-        }
-    };
-
-    const handleSelectWeekend = () => {
-        // Toggle: if all weekend days are selected, deselect them; otherwise select all weekend days
-        const isWeekendSelected = weekend.every(day => dailyTimeDays.includes(day));
-        if (isWeekendSelected) {
-            setDailyTimeDays(prev => prev.filter(day => !weekend.includes(day)));
-        } else {
-            setDailyTimeDays(prev => {
-                const withoutWeekend = prev.filter(day => !weekend.includes(day));
-                return [...withoutWeekend, ...weekend].sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b));
-            });
-        }
-    };
-
-    const handleSaveDailyTime = async () => {
-        if(dailyTimeMinutes <= 0){
-            alert('Please add more time to save.');
-            return;
-        }
-        if (dailyTimeDays.length === 0) {
-            alert('Please select at least one day');
-            return;
-        }
-
-        const dailyTime = {
-            time: dailyTimeMinutes,
-            days: [...dailyTimeDays]
-        };
-
-        try{
-            await updateDailyTimeApi(selectedChildId, dailyTimeMinutes, dailyTimeDays, user.token);
-            // Clear the list and fetch fresh data from server
-            await fetchDailyTime();
-        }catch(error){
-            console.error('Failed to save daily time:', error);
-        }
-
-        // Reset form
-        setDailyTimeDays([]);
-        setDailyTimeMinutes(30);
-        setEditingDailyTimeIndex(null);
-    };
-
-    const handleCancelEditDailyTime = () => {
-        setEditingDailyTimeIndex(null);
-        setDailyTimeDays([]);
-        setDailyTimeMinutes(30);
-    };
-
-    const handleToggleScheduleTimeDay = (day) => {
-        setScheduleTimeDays(prev => 
-            prev.includes(day) 
-                ? prev.filter(d => d !== day)
-                : [...prev, day].sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b))
-        );
-    };
-
-    const handleSelectAllScheduleTime = () => {
-        if (scheduleTimeDays.length === 7) {
-            setScheduleTimeDays([]);
-        } else {
-            setScheduleTimeDays([...weekDays]);
-        }
-    };
-
-    const handleSelectWeekdaysScheduleTime = () => {
-        const isWeekdaysSelected = weekdays.every(day => scheduleTimeDays.includes(day));
-        if (isWeekdaysSelected) {
-            setScheduleTimeDays(prev => prev.filter(day => !weekdays.includes(day)));
-        } else {
-            setScheduleTimeDays(prev => {
-                const withoutWeekdays = prev.filter(day => !weekdays.includes(day));
-                return [...withoutWeekdays, ...weekdays].sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b));
-            });
-        }
-    };
-
-    const handleSelectWeekendScheduleTime = () => {
-        const isWeekendSelected = weekend.every(day => scheduleTimeDays.includes(day));
-        if (isWeekendSelected) {
-            setScheduleTimeDays(prev => prev.filter(day => !weekend.includes(day)));
-        } else {
-            setScheduleTimeDays(prev => {
-                const withoutWeekend = prev.filter(day => !weekend.includes(day));
-                return [...withoutWeekend, ...weekend].sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b));
-            });
-        }
-    };
-
-    const handleSaveScheduleTime = async () => {
-        if (scheduleTimeDays.length === 0) {
-            alert('Please select at least one day');
-            return;
-        }
-        
-        const scheduleTime = {
-            name: '',
-            days: [...scheduleTimeDays],
-            startTime: scheduleTimeStart,
-            endTime: scheduleTimeEnd
-        };
-
-        try{
-            await updateScheduleTimeApi(selectedChildId, scheduleTime, user.token);
-        }catch(error){
-            console.error('Failed to save schedule time:', error);
-        }
-
-
-        if (editingScheduleTimeIndex !== null) {
-            // Update existing schedule time
-            setScheduleTimes(prev => {
-                const updated = [...prev];
-                updated[editingScheduleTimeIndex] = scheduleTime;
-                return updated;
-            });
-            setEditingScheduleTimeIndex(null);
-        } else {
-            // Add new schedule time
-            setScheduleTimes(prev => [...prev, scheduleTime]);
-        }
-
-        // Reset form
-        setScheduleTimeDays([]);
-        setScheduleTimeName('');
-        setScheduleTimeStart('22:00');
-        setScheduleTimeEnd('06:00');
-    };
-
-    const handleEditScheduleTime = (index) => {
-        const scheduleTime = scheduleTimes[index];
-        setScheduleTimeDays([...scheduleTime.days]);
-        setScheduleTimeName(scheduleTime.name || '');
-        setScheduleTimeStart(scheduleTime.startTime);
-        setScheduleTimeEnd(scheduleTime.endTime);
-        setEditingScheduleTimeIndex(index);
-    };
-
-    const handleDeleteScheduleTime = (index) => {
-        if (window.confirm('Are you sure you want to delete this schedule time?')) {
-            setScheduleTimes(prev => prev.filter((_, i) => i !== index));
-            try{
-                deleteScheduleTimeApi(scheduleTimes[index].id, user.token);
-            }catch(error){
-                    console.log('Failed to delete schedule time:', error);
-            }
-                
-            if (editingScheduleTimeIndex === index) {
-                // Cancel edit if deleting the item being edited
-                handleCancelEditScheduleTime();
-            } else if (editingScheduleTimeIndex > index) {
-                // Adjust editing index if deleting an item before the one being edited
-                setEditingScheduleTimeIndex(prev => prev - 1);
-            }
-        }
-    };
-
-    const handleCancelEditScheduleTime = () => {
-        setEditingScheduleTimeIndex(null);
-        setScheduleTimeDays([]);
-        setScheduleTimeName('');
-        setScheduleTimeStart('22:00');
-        setScheduleTimeEnd('06:00');
-    };
 
 return(
-    <Container>
+    <div className="parent-control-container">
         <h5 className="control-screen-time-header">Parent Control</h5>
         
-        <div className="mb-4">
-            <Card 
-                className="quick-action-card clickable-card"
-                onClick={() => handleCardClick('timeControl')}
-            >
-                <Card.Body>
-                    <h5 className="section-title">Time Control</h5>
-                    <p className="card-explanation">
-                        Set daily time limits and schedule time restrictions for your children.
-                    </p>
-                </Card.Body>
-            </Card>
-        </div>
-        
-        <div className="mb-4">
-            <Card 
-                className="quick-action-card clickable-card"
-                onClick={() => handleCardClick('apps')}
-            >
-                <Card.Body>
-                    <h5 className="section-title">Apps Control</h5>
-                    <p className="card-explanation">
-                        Select which applications should be blocked or allowed for your children.
-                    </p>
-                </Card.Body>
-            </Card>
-        </div>
-        
-        <div className="mb-4">
-            <Card 
-                className="quick-action-card clickable-card"
-                onClick={() => handleCardClick('sites')}
-            >
-                <Card.Body>
-                    <h5 className="section-title">Sites Control</h5>
-                    <p className="card-explanation">
-                        Manage which websites your children can access. Block or allow specific domains.
-                    </p>
-                </Card.Body>
-            </Card>
+        <div className="quick-actions-wrapper">
+            <div className="quick-action-item">
+                <div 
+                    className="card quick-action-card clickable-card"
+                    onClick={() => handleCardClick('timeControl')}
+                >
+                    <div className="card-body">
+                        <h5 className="section-title">Time Control</h5>
+                        <p className="card-explanation">
+                            Set daily time limits and schedule time restrictions for your children.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="quick-action-item">
+                <div 
+                    className="card quick-action-card clickable-card"
+                    onClick={() => handleCardClick('apps')}
+                >
+                    <div className="card-body">
+                        <h5 className="section-title">Apps Control</h5>
+                        <p className="card-explanation">
+                            Select which applications should be blocked or allowed for your children.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="quick-action-item">
+                <div 
+                    className="card quick-action-card clickable-card"
+                    onClick={() => handleCardClick('sites')}
+                >
+                    <div className="card-body">
+                        <h5 className="section-title">Sites Control</h5>
+                        <p className="card-explanation">
+                            Manage which websites your children can access. Block or allow specific domains.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {activeSection && (
@@ -763,19 +337,21 @@ return(
                 className="modal-overlay"
                 onClick={handleBackdropClick}
             >
-                <Card
+                <div
                     className="modal-card"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <Card.Body className="modal-card-body">
+                    <div className="modal-card-body">
                         {activeSection === 'apps' && renderAppsContent()}
                         {activeSection === 'sites' && renderSitesContent()}
-                        {activeSection === 'timeControl' && renderTimeControlContent()}
-                    </Card.Body>
-                </Card>
+                        {activeSection === 'timeControl' && (
+                            <TimeControl selectedChildId={selectedChildId} children={children} />
+                        )}
+                    </div>
+                </div>
             </div>
         )}
-    </Container>
+    </div>
 )
 }
 

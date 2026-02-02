@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Form, Button, FloatingLabel, Alert, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from '../api/firebaseAuth';
 
 import { useAuth } from '../context/AuthContext';
 import { getUserData } from '../api/firebaseUser'; 
+import './Login.css';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -36,6 +36,7 @@ function Login() {
     const whatsAppNumber = userData.whatsAppNumber || '';
     
     const user = {
+      id: userData.id,
       uid: data.localId,
       email: data.email,
       token: data.idToken,
@@ -88,45 +89,56 @@ function Login() {
 
 
   return (
-    <Container className="mt-5" style={{ maxWidth: '400px' }}>
-      <h2 className="mb-4">Login</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {info && <Alert variant="success">{info}</Alert>}
+    <div className="login-page">
+      <div className="login-card">
+        <h2 className="login-title">Login</h2>
+        {error && <div className="login-alert login-alert-error">{error}</div>}
+        {info && <div className="login-alert login-alert-info">{info}</div>}
 
-      <Form onSubmit={handleSubmit}>
-        <FloatingLabel controlId="floatingEmail" label="Email address" className="mb-3">
-          <Form.Control
-            type="email"
-            placeholder="name@example.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-        </FloatingLabel>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="login-field">
+            <label htmlFor="email" className="login-label">
+              Email address
+            </label>
+            <input
+              id="email"
+              type="email"
+              className="login-input"
+              placeholder="name@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <FloatingLabel controlId="floatingPassword" label="Password" className="mb-3">
-          <Form.Control
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </FloatingLabel>
+          <div className="login-field">
+            <label htmlFor="password" className="login-label">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              className="login-input"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <Button variant="primary" type="submit" className="w-100 mb-2">
-          Log In
-        </Button>
-        <Button
-          variant="link"
-          type="button"
-          className="w-100 p-0"
-          onClick={handlePasswordReset}
-        >
-          Forgot your password?
-        </Button>
-      </Form>
-    </Container>
+          <button type="submit" className="login-button">
+            Log In
+          </button>
+          <button
+            type="button"
+            className="login-link"
+            onClick={handlePasswordReset}
+          >
+            Forgot your password?
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 

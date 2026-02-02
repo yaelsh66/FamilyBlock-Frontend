@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import { getKidsByFamily } from '../../api/firebaseTasks';
-import ParentApprovalPage from '../ParentApprovalPage';
 import '../ParentControl.css';
 import ControlScreenTime from '../../components/ControlScreenTime';
 import ParentControl from '../ParentControl';
@@ -44,13 +42,13 @@ function ParentHomePage() {
   }, [searchParams, setSearchParams]);
 
   return (
-    <Container fluid className="parent-home-container mt-4">
+    <div className="parent-home-container">
       <div className="parent-home-header">
         <h1 className="page-header parent-home-title">Parent Home Page</h1>
         <div className="parent-home-child-selector-wrapper">
-          <Card className="parent-home-child-selector-card">
-            <div className="child-selector-container" style={{ margin: 0 }}>
-              <label htmlFor="child-select" className="child-selector-label" style={{ marginRight: '0.5rem' }}>
+          <div className="parent-home-child-selector-card">
+            <div className="child-selector-container">
+              <label htmlFor="child-select" className="child-selector-label">
                 Choose Child:
               </label>
               <select
@@ -61,14 +59,13 @@ function ParentHomePage() {
               >
                 <option value="">-- Select a child --</option>
                 {children.map((child) => (
-                  
                   <option key={child.id} value={child.id}>
                     {child.nickname || child.email || child.id}
                   </option>
                 ))}
               </select>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
       <div className="parent-home-content">
@@ -82,7 +79,7 @@ function ParentHomePage() {
           </div>
         </div>
       </div>
-    </Container>
+    </div>
   );
 }
 

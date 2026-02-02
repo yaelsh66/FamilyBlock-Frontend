@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, FloatingLabel, Container, Alert, Modal } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
-
 import { useTaskContext } from '../../context/TaskContext';
+import './AddTaskForm.css';
 
 function AddTaskForm({ show, onHide }) {
-  const { user, loading } = useAuth();  // ✅ Include loading state
+  const { user, loading } = useAuth(); // Include loading state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [time, setAmount] = useState('');
@@ -27,17 +26,23 @@ function AddTaskForm({ show, onHide }) {
 
   if (loading) {
     return isModal ? null : (
-      <Container className="mt-5 text-center">
-        <h4>Loading...</h4>
-      </Container>
+      <div className="add-task-page">
+        <div className="add-task-card add-task-message-card">
+          <h4 className="add-task-message-title">Loading...</h4>
+        </div>
+      </div>
     );
   }
 
   if (!user) {
     return isModal ? null : (
-      <Container className="mt-5">
-        <Alert variant="warning">🚫 You must be logged in to add tasks.</Alert>
-      </Container>
+      <div className="add-task-page">
+        <div className="add-task-card add-task-message-card">
+          <div className="add-task-alert add-task-alert-warning">
+            You must be logged in to add tasks.
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -82,76 +87,126 @@ function AddTaskForm({ show, onHide }) {
 
   const formContent = (
     <>
-      <FloatingLabel label="Task Title" className="mb-3">
-        <Form.Control
+      <div className="add-task-field">
+        <label htmlFor="task-title" className="add-task-label">
+          Task Title
+        </label>
+        <input
+          id="task-title"
           type="text"
+          className="add-task-input"
           placeholder="Walk the dog"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-      </FloatingLabel>
+      </div>
 
-      <FloatingLabel label="Comment" className="mb-3">
-        <Form.Control
-          as="textarea"
+      <div className="add-task-field">
+        <label htmlFor="task-description" className="add-task-label">
+          Comment
+        </label>
+        <textarea
+          id="task-description"
+          className="add-task-textarea"
           placeholder="Describe the task"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          style={{ height: '100px' }}
         />
-      </FloatingLabel>
+      </div>
 
-      
-        <FloatingLabel label="Reward Screen Time (minutes)" className="mb-3">
-          <Form.Control
-            type="number"
-            placeholder="Amount in shekels"
-            value={time}
-            onChange={(e) => setAmount(e.target.value)}
-            min="0"
-            step="1"
-          />
-        </FloatingLabel>
-      
+      <div className="add-task-field">
+        <label htmlFor="task-time" className="add-task-label">
+          Reward Screen Time (minutes)
+        </label>
+        <input
+          id="task-time"
+          type="number"
+          className="add-task-input"
+          placeholder="Amount in minutes"
+          value={time}
+          onChange={(e) => setAmount(e.target.value)}
+          min="0"
+          step="1"
+        />
+      </div>
     </>
   );
 
   // Render as Modal if show/onHide props are provided
   if (isModal) {
+    if (!show) {
+      return null;
+    }
+
     return (
-      <Modal show={show} onHide={handleClose} centered>
-        <Form onSubmit={handleSubmit}>
-          <Modal.Header closeButton>
-            <Modal.Title>📝 Add New Task</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+      <div className="add-task-backdrop" role="dialog" aria-modal="true">
+        <div className="add-task-modal">
+          <div className="add-task-modal-header">
+            <h2 className="add-task-modal-title">📝 Add New Task</h2>
+            <button
+              type="button"
+              className="add-task-close-btn"
+              onClick={handleClose}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="add-task-form">
             {formContent}
-            {success && <p className="mt-3 text-success">✅ Task added successfully!</p>}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose} type="button">
-              Cancel
-            </Button>
-            <Button variant="success" type="submit">
-              Add Task
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
+
+            {success && (
+              <div className="add-task-alert add-task-alert-success">
+                Task added successfully!
+              </div>
+            )}
+
+            <div className="add-task-button-row">
+              <button
+                type="button"
+                className="add-task-btn add-task-btn-secondary"
+                onClick={handleClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="add-task-btn add-task-btn-primary"
+              >
+                Add Task
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     );
   }
 
   // Render as page component (backward compatibility)
   return (
-    <Container className="mt-5" style={{ maxWidth: '600px' }}>
-      <h2 className="mb-4">📝 Add New Task</h2>
-      <Form onSubmit={handleSubmit}>
-        {formContent}
-        <Button type="submit" variant="success" className="w-100">Add Task</Button>
-        {success && <p className="mt-3 text-success">✅ Task added successfully!</p>}
-      </Form>
-    </Container>
+    <div className="add-task-page">
+      <div className="add-task-card">
+        <h2 className="add-task-title">📝 Add New Task</h2>
+        <form onSubmit={handleSubmit} className="add-task-form">
+          {formContent}
+
+          <button
+            type="submit"
+            className="add-task-btn add-task-btn-primary add-task-btn-full"
+          >
+            Add Task
+          </button>
+
+          {success && (
+            <div className="add-task-alert add-task-alert-success">
+              Task added successfully!
+            </div>
+          )}
+        </form>
+      </div>
+    </div>
   );
 }
 

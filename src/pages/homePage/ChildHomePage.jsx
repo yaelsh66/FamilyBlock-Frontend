@@ -7,7 +7,6 @@ import { useScreenTime } from '../../context/ScreenTimeContext';
 import { useTaskContext } from '../../context/TaskContext';
 import TaskItem from '../../components/TaskItem';
 import { submitCompletion } from '../../api/firebaseTasks';
-import { Modal, Form, FloatingLabel, Button } from 'react-bootstrap';
 import './ChildHomePage.css';
 
 function ChildHomePage() {
@@ -176,34 +175,38 @@ function ChildHomePage() {
       </div>
 
       {/* Comment Modal */}
-      <Modal show={showCommentModal} onHide={handleCommentModalClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Complete Task</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p className="mb-3">
-            <strong>Task:</strong> {selectedTask?.title}
-          </p>
-          <FloatingLabel controlId="comment" label="Add a comment (optional)">
-            <Form.Control
-              as="textarea"
-              placeholder="Enter your comment here..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              rows={4}
-              style={{ minHeight: '100px' }}
-            />
-          </FloatingLabel>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCommentModalClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleCommentSubmit}>
-            Complete Task
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {showCommentModal && (
+        <div className="child-home-modal-overlay" onClick={handleCommentModalClose} role="presentation">
+          <div className="child-home-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="child-home-modal-title">
+            <div className="child-home-modal-header">
+              <h3 id="child-home-modal-title" className="child-home-modal-title">Complete Task</h3>
+              <button type="button" className="child-home-modal-close" onClick={handleCommentModalClose} aria-label="Close">&times;</button>
+            </div>
+            <div className="child-home-modal-body">
+              <p className="child-home-modal-task-label">
+                <strong>Task:</strong> {selectedTask?.title}
+              </p>
+              <label htmlFor="child-home-comment" className="child-home-modal-label">Add a comment (optional)</label>
+              <textarea
+                id="child-home-comment"
+                className="child-home-modal-textarea"
+                placeholder="Enter your comment here..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows={4}
+              />
+            </div>
+            <div className="child-home-modal-footer">
+              <button type="button" className="child-home-button child-home-modal-btn child-home-modal-btn-cancel" onClick={handleCommentModalClose}>
+                Cancel
+              </button>
+              <button type="button" className="child-home-button child-home-modal-btn child-home-modal-btn-submit" onClick={handleCommentSubmit}>
+                Complete Task
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

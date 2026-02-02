@@ -1,8 +1,8 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { Card, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
 import { getIsRunningApi, blockDeviceApi, unblockDeviceApi } from '../api/deviceApi';
 import { useAuth } from '../context/AuthContext';
 import { updateChildTime } from '../api/timeControlApi';
+import './ControlScreenTime.css';
 
 function ControlScreenTime({ selectedChildId, childrenList = [] }) {
   const [totalScreenTime, setTotalScreenTime] = useState();
@@ -104,84 +104,87 @@ function ControlScreenTime({ selectedChildId, childrenList = [] }) {
   };
   
   return (
-    <>
+    <div className="control-screen-time-container">
       <h5 className="control-screen-time-header">Screen Time</h5>
 
-      <div className="mb-4">
-        <Card className="quick-action-card">
-          <Card.Body>
+      <div className="control-section">
+        <div className="control-card">
+          <div className="control-card-body">
             <h5 className="section-title">Total Screen Time</h5>
             <div className="time-amount-box total-time-box">
               {totalScreenTime} min
             </div>
 
-            <h5 className="section-title" style={{ marginTop: '1rem' }}>
+            <h5 className="section-title add-reduce-title">
               Add/Reduce Time
             </h5>
             <div className="time-amount-container">
-              <Button
+              <button
+                type="button"
                 onClick={handleDecrementTime}
                 className="time-adjust-button"
                 disabled={!selectedChildId}
               >
                 -
-              </Button>
+              </button>
               <div className="time-amount-box">
                 {timeToAddReduce} min
               </div>
-              <Button
+              <button
+                type="button"
                 onClick={handleIncrementTime}
                 className="time-adjust-button"
                 disabled={!selectedChildId}
               >
                 +
-              </Button>
+              </button>
             </div>
-            <Button
+            <button
+              type="button"
               onClick={handleSaveTime}
               className="save-time-button"
               disabled={!selectedChildId}
             >
               Save
-            </Button>
+            </button>
             <p className="card-explanation">
               Adjust screen time limit by adding or removing minutes from the
               child's daily allowance.
             </p>
-          </Card.Body>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-4">
-        <Card className="quick-action-card">
-          <Card.Body>
+      <div className="control-section">
+        <div className="control-card">
+          <div className="control-card-body">
             <h5 className="section-title">Stop Time Now</h5>
             <div className="time-control-buttons">
-              <Button
-                variant="danger"
+              <button
+                type="button"
                 onClick={handleBlock}
                 disabled={isBlocked || !selectedChildId}
-                className="control-button"
+                className="control-button control-button-block"
               >
                 Block
-              </Button>
-              <Button
-                variant="success"
+              </button>
+              <button
+                type="button"
                 onClick={handleUnblock}
                 disabled={!isBlocked || !selectedChildId}
-                className="control-button"
+                className="control-button control-button-unblock"
               >
                 Unblock
-              </Button>
+              </button>
             </div>
             <p className="card-explanation">
               Instantly block or unblock screen time access for the selected
               child.
             </p>
-          </Card.Body>
-        </Card>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

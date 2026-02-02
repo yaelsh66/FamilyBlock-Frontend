@@ -26,15 +26,26 @@
     cursor: pointer;
 }
 
+/* Simple layout container to replace Bootstrap Container */
+.parent-control-container {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 16px 32px;
+    box-sizing: border-box;
+}
+
 .modal-overlay {
     position: fixed;
-    top: 0;
+    /* Start below the fixed navbar (56px tall) */
+    top: 56px;
     left: 0;
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
+    /* Center within the area under the navbar */
     align-items: center;
     z-index: 1050;
 }
@@ -45,6 +56,8 @@
     max-height: 80vh;
     overflow-y: auto;
     border: 2px solid #007bff;
+    background-color: #ffffff;
+    margin: 16px;
 }
 
 .modal-card-body {
@@ -88,9 +101,119 @@
     background: #fff;
 }
 
-.apps-sites-save-section .btn {
+.apps-sites-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 4px;
+    cursor: pointer;
+}
+
+.apps-sites-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.apps-sites-item-label {
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.apps-sites-save-button {
     flex: 1;
     min-width: 140px;
+}
+
+/* Generic card styles to replace react-bootstrap Card */
+.card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 1.25rem 1.5rem;
+}
+
+/* Basic button system to replace react-bootstrap Button */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #e2e8f0;
+    color: #1a202c;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background-color: #3182ce;
+    border-color: #3182ce;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #2b6cb0;
+    border-color: #2b6cb0;
+}
+
+.btn-secondary {
+    background-color: #4a5568;
+    border-color: #4a5568;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #2d3748;
+    border-color: #2d3748;
+}
+
+.btn-danger {
+    background-color: #e53e3e;
+    border-color: #e53e3e;
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #c53030;
+    border-color: #c53030;
+}
+
+.btn-outline-primary {
+    background-color: transparent;
+    border-color: #3182ce;
+    color: #3182ce;
+}
+
+.btn-outline-primary:hover {
+    background-color: #ebf8ff;
+}
+
+.btn-outline-secondary {
+    background-color: transparent;
+    border-color: #a0aec0;
+    color: #4a5568;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #edf2f7;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
 }
 
 .time-control-buttons {
@@ -585,4 +708,62 @@
 .clickable-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Quick actions layout - vertical stack like original */
+.quick-actions-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.quick-action-item {
+    width: 100%;
+}
+
+@media (max-width: 640px) {
+    .parent-control-container {
+        padding: 0 12px 24px;
+    }
+
+    .modal-card {
+        width: 92%;
+        max-width: 480px;
+        max-height: 88vh;
+    }
+
+    .modal-card-body {
+        padding: 1.25rem;
+    }
+
+    .days-selection,
+    .days-selection-special {
+        justify-content: center;
+    }
+
+    .time-input-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .time-input-container input {
+        width: 100%;
+    }
+
+    .schedule-time-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .schedule-time-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .daily-times-days-row,
+    .daily-times-values-row {
+        gap: 4px;
+    }
 }

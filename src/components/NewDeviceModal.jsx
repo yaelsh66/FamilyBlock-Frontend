@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Modal, Form, FloatingLabel, Button, Alert } from 'react-bootstrap';
 import { addNewDeviceApi, downloadAgentApi, downloadAgentUIApi } from '../api/deviceApi';
+import './NewDeviceModal.css';
 
 function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
   const [name, setName] = useState('');
@@ -70,133 +70,187 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
 
   const step2Enabled = step1Complete;
 
+  if (!show) {
+    return null;
+  }
+
   return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>➕ Add New Device</Modal.Title>
-      </Modal.Header>
-      <Form onSubmit={handleSubmit}>
-        <Modal.Body>
+    <div className="ndm-backdrop" onClick={handleClose}>
+      <div
+        className="ndm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="new-device-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header className="ndm-header">
+          <h2 id="new-device-title" className="ndm-title">
+            ➕ Add New Device
+          </h2>
+          <button
+            type="button"
+            className="ndm-close-btn"
+            onClick={handleClose}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </header>
+
+        <form onSubmit={handleSubmit} className="ndm-form">
           {error && (
-            <Alert variant="danger" dismissible onClose={() => setError('')}>
-              {error}
-            </Alert>
+            <div className="ndm-alert">
+              <span>{error}</span>
+              <button
+                type="button"
+                className="ndm-alert-close"
+                onClick={() => setError('')}
+                aria-label="Dismiss error"
+              >
+                ×
+              </button>
+            </div>
           )}
 
           {/* Step 1: Add Device — always visible, enabled */}
-          <div className="mb-4">
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <span
-                className={`rounded-circle d-inline-flex align-items-center justify-content-center ${step1Complete ? 'bg-success text-white' : 'bg-primary text-white'}`}
-                style={{ width: 28, height: 28, fontSize: '0.9rem', fontWeight: 600 }}
-              >
+          <section className="ndm-section">
+            <div className="ndm-step-header">
+              <span className={`ndm-step-circle ${step1Complete ? 'ndm-step-complete' : 'ndm-step-active'}`}>
                 {step1Complete ? '✓' : '1'}
               </span>
-              <h6 className="mb-0">Step 1: Add Device</h6>
+              <h3 className="ndm-step-title">Step 1: Add Device</h3>
             </div>
-            <FloatingLabel controlId="name" label="Name" className="mb-3">
-              <Form.Control
+
+            <div className="ndm-field">
+              <label htmlFor="name" className="ndm-label">
+                Name
+              </label>
+              <input
+                id="name"
                 type="text"
+                className="ndm-input"
                 placeholder="Enter name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
                 disabled={step1Complete}
               />
-            </FloatingLabel>
-            <FloatingLabel controlId="deviceId" label="Device ID" className="mb-3">
-              <Form.Control
+            </div>
+
+            <div className="ndm-field">
+              <label htmlFor="deviceId" className="ndm-label">
+                Device ID
+              </label>
+              <input
+                id="deviceId"
                 type="text"
+                className="ndm-input"
                 placeholder="Enter device ID"
                 value={deviceId}
                 onChange={(e) => setDeviceId(e.target.value)}
                 required
                 disabled={step1Complete}
               />
-            </FloatingLabel>
-            <FloatingLabel controlId="devicePassword" label="Device Password" className="mb-0">
-              <Form.Control
+            </div>
+
+            <div className="ndm-field">
+              <label htmlFor="devicePassword" className="ndm-label">
+                Device Password
+              </label>
+              <input
+                id="devicePassword"
                 type="password"
+                className="ndm-input"
                 placeholder="Enter device password"
                 value={devicePassword}
                 onChange={(e) => setDevicePassword(e.target.value)}
                 required
                 disabled={step1Complete}
               />
-            </FloatingLabel>
-          </div>
+            </div>
+          </section>
 
           {!step1Complete && (
-            <div className="d-flex gap-2 mb-4">
-              <Button
+            <div className="ndm-button-row ndm-button-row-primary">
+              <button
                 type="button"
-                variant="secondary"
+                className="ndm-btn ndm-btn-secondary"
                 onClick={handleClose}
                 disabled={submitting || downloading || downloadingUI}
-                className="flex-fill"
               >
                 Cancel
-              </Button>
-              <Button variant="primary" type="submit" disabled={submitting} className="flex-fill">
+              </button>
+              <button
+                type="submit"
+                className="ndm-btn ndm-btn-primary"
+                disabled={submitting}
+              >
                 {submitting ? 'Adding...' : 'Add Device'}
-              </Button>
+              </button>
             </div>
           )}
 
           {/* Step 2: Download & Install — enabled only after Step 1 */}
-          <div className={step2Enabled ? '' : 'opacity-50'}>
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <span
-                className={`rounded-circle d-inline-flex align-items-center justify-content-center ${step2Enabled ? 'bg-primary text-white' : 'bg-secondary text-white'}`}
-                style={{ width: 28, height: 28, fontSize: '0.9rem', fontWeight: 600 }}
-              >
+          <section className={`ndm-section ${step2Enabled ? '' : 'ndm-section-disabled'}`}>
+            <div className="ndm-step-header">
+              <span className={`ndm-step-circle ${step2Enabled ? 'ndm-step-active' : 'ndm-step-disabled'}`}>
                 2
               </span>
-              <h6 className="mb-0">Step 2: Download & Install</h6>
+              <h3 className="ndm-step-title">Step 2: Download & Install</h3>
             </div>
+
             {step2Enabled ? (
               <>
-                <div className="d-flex gap-2 mb-3">
-                  <Button
+                <div className="ndm-button-row">
+                  <button
                     type="button"
-                    variant="outline-primary"
+                    className="ndm-btn ndm-btn-outline-primary"
                     onClick={handleDownload}
                     disabled={downloading || downloadingUI}
-                    className="flex-fill"
                   >
                     {downloading ? 'Downloading...' : '📥 Download Agent'}
-                  </Button>
-                  <Button
+                  </button>
+                  <button
                     type="button"
-                    variant="outline-secondary"
+                    className="ndm-btn ndm-btn-outline-secondary"
                     onClick={handleDownloadUI}
                     disabled={downloading || downloadingUI}
-                    className="flex-fill"
                   >
                     {downloadingUI ? 'Downloading...' : '📥 Download Agent (UI)'}
-                  </Button>
+                  </button>
                 </div>
-                <small className="text-muted d-block mb-2 fw-semibold">Install instructions:</small>
-                <ol className="ps-3 mb-0 small text-muted">
+                <p className="ndm-instructions-label">Install instructions:</p>
+                <ol className="ndm-instructions-list">
                   <li>Run the downloaded installer on the device.</li>
-                  <li>When prompted, enter the Device ID: <strong className="text-dark">{deviceId}</strong></li>
+                  <li>
+                    When prompted, enter the Device ID:{' '}
+                    <strong>{deviceId}</strong>
+                  </li>
                   <li>Complete the setup and ensure the device is connected.</li>
                 </ol>
               </>
             ) : (
-              <p className="small text-muted mb-0">Complete Step 1 to unlock download and install instructions.</p>
+              <p className="ndm-helper-text">
+                Complete Step 1 to unlock download and install instructions.
+              </p>
             )}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          {step1Complete ? (
-            <Button variant="primary" onClick={handleClose} disabled={downloading || downloadingUI}>
-              Done
-            </Button>
-          ) : null}
-        </Modal.Footer>
-      </Form>
-    </Modal>
+          </section>
+
+          {step1Complete && (
+            <div className="ndm-footer">
+              <button
+                type="button"
+                className="ndm-btn ndm-btn-primary ndm-btn-full"
+                onClick={handleClose}
+                disabled={downloading || downloadingUI}
+              >
+                Done
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
+    </div>
   );
 }
 

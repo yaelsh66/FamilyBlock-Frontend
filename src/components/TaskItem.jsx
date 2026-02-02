@@ -5,7 +5,6 @@ import './TaskItem.css';
 
 // Playful yet clean TaskItem. Logic unchanged; UI tweaks: badge wraps, no 🎉 emoji on title.
 export default function TaskItem({ task, isAssigned = false, onComplete, onStartUpdate }) {
-  const { user } = useAuth();
   const { deleteTask } = useTaskContext();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -125,20 +124,22 @@ export default function TaskItem({ task, isAssigned = false, onComplete, onStart
               )}
 
               {!isEditing && onStartUpdate && (
-                <button
-                  className="btn btn-warning btn-sm"
-                  onClick={() => setIsEditing(true)}
-                >
-                  ✏️ Update
-                </button>
+                <>
+                  <button
+                    className="btn btn-warning btn-sm"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    ✏️ Update
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={handleDelete}
+                    disabled={loading}
+                  >
+                    {loading ? <span className="spinner spinner-sm"></span> : '🗑️ Delete'}
+                  </button>
+                </>
               )}
-              <button
-                className="btn btn-danger btn-sm"
-                onClick={handleDelete}
-                disabled={loading}
-              >
-                {loading ? <span className="spinner spinner-sm"></span> : '🗑️ Delete'}
-              </button>
             </div>
           </>
         )}

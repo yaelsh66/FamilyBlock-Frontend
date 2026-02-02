@@ -1,6 +1,10 @@
 /* Parent Home Page Styles */
 .parent-home-container {
   padding: 1rem 0.5rem;
+  margin-top: 1.5rem;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .parent-home-header {
@@ -75,6 +79,11 @@
 .parent-home-child-selector-card {
   padding: 0.5rem 1rem;
   width: 100%;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .parent-home-content {
@@ -185,6 +194,11 @@
   .parent-home-main-content {
     max-width: 100%;
   }
+
+  .parent-home-child-selector-card .child-selector {
+    min-height: 44px; /* touch-friendly on mobile */
+    width: 100%;
+  }
 }
 
 /* Small mobile */
@@ -206,4 +220,13 @@
     padding: 1rem 0.75rem;
     border-radius: 8px;
   }
+
+  .parent-home-child-selector-card .child-selector {
+    min-height: 44px; /* touch-friendly */
+    width: 100%;
+  }
+}
+
+.parent-home-title.page-header {
+  box-sizing: border-box;
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import './Brawl.css';
-import { Button, InputGroup, FormControl, Row, Col } from 'react-bootstrap';
+import "./Brawl.css";
 
 function Brawl() {
 
@@ -212,29 +211,57 @@ function Brawl() {
   };
 
   return (
-    <div className="brawl-wrapper container text-center my-5">
-      <h1 className="mb-4">בראוול סטארס - נחשו את כל הבראולרים</h1>
+    <div className="brawl-wrapper">
+      <h1 className="brawl-title">בראוול סטארס - נחשו את כל הבראולרים</h1>
 
-      <div className="mb-3 d-flex flex-wrap justify-content-center gap-2">
-        <Button variant="primary" onClick={handleStart}>התחל</Button>
-        
-        <Button variant="secondary" onClick={handleReset}>איפוס</Button>
-        <Button variant="danger" onClick={handleGiveUp}>ויתרתי</Button>
+      <div className="brawl-controls">
+        <button
+          type="button"
+          className="brawl-button brawl-button-primary"
+          onClick={handleStart}
+        >
+          התחל
+        </button>
+        <button
+          type="button"
+          className="brawl-button brawl-button-secondary"
+          onClick={handleReset}
+        >
+          איפוס
+        </button>
+        <button
+          type="button"
+          className="brawl-button brawl-button-danger"
+          onClick={handleGiveUp}
+        >
+          ויתרתי
+        </button>
       </div>
 
-      <h4 className="mb-4">⏱ זמן: {Math.floor(time/60)}:{String(time%60).padStart(2, 0)} שניות</h4>
-      { isRunning &&
-      <InputGroup className="mb-4 w-100 w-md-50 mx-auto">
-        <FormControl
-          type="text"
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
-          placeholder="הכנס בראוולר"
-        />
-        <Button variant="success" onClick={handleAddItem}>הוסף</Button>
-      </InputGroup>
-      }
+      <h4 className="brawl-timer">
+        ⏱ זמן: {Math.floor(time / 60)}:
+        {String(time % 60).padStart(2, 0)} שניות
+      </h4>
+
+      {isRunning && (
+        <div className="brawl-input-group">
+          <input
+            type="text"
+            className="brawl-input"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
+            placeholder="הכנס בראוולר"
+          />
+          <button
+            type="button"
+            className="brawl-button brawl-button-success"
+            onClick={handleAddItem}
+          >
+            הוסף
+          </button>
+        </div>
+      )}
       <div className="category-container">
         {Object.keys(currentTable).map((category) => {
           const totalItems = brawlTable[category].length;

@@ -1,4 +1,11 @@
+.profile-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
 .profile-container {
+  width: 100%;
   max-width: 800px;
 }
 
@@ -6,12 +13,18 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: none;
   border-radius: 10px;
+  background-color: #ffffff;
+  overflow: hidden;
 }
 
 .profile-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 10px 10px 0 0 !important;
+  padding: 1.5rem;
+}
+
+.profile-body {
   padding: 1.5rem;
 }
 
@@ -56,7 +69,7 @@
   border-top: 1px solid #dee2e6;
 }
 
-.profile-actions .btn {
+.profile-actions .profile-button {
   min-width: 150px;
 }
 
@@ -123,21 +136,204 @@
   margin-top: 0.25rem;
 }
 
+/* Buttons */
+.profile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.05s ease;
+  font-size: 0.95rem;
+}
+
+.profile-button-primary {
+  background-color: #4c6fff;
+  color: #ffffff;
+}
+
+.profile-button-primary:hover {
+  background-color: #3b5ce5;
+}
+
+.profile-button-secondary {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.profile-button-secondary:hover {
+  background-color: #dde2e6;
+}
+
+.profile-button-success {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.profile-button-success:hover {
+  background-color: #218838;
+}
+
+.profile-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.profile-button:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* Alerts */
+.profile-alert {
+  position: relative;
+  padding: 0.75rem 2.25rem 0.75rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.profile-alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.profile-alert-danger {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.profile-alert-warning {
+  background-color: #fff3cd;
+  color: #664d03;
+}
+
+.profile-alert-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.5rem;
+  border: none;
+  background: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Inputs */
+.profile-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profile-input:focus {
+  border-color: #4c6fff;
+  box-shadow: 0 0 0 2px rgba(76, 111, 255, 0.2);
+}
+
+/* Custom Modal */
+.profile-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.profile-modal {
+  background-color: #ffffff;
+  border-radius: 12px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.4);
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.profile-modal-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.profile-modal-close {
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.profile-modal-body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.profile-modal-text {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.profile-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
 @media (max-width: 768px) {
+  .profile-page {
+    padding: 1rem 0.75rem 2rem;
+  }
+
   .profile-container {
-    padding: 0 1rem;
+    padding: 0;
   }
 
   .profile-header h2 {
     font-size: 1.5rem;
   }
 
-  .profile-actions .btn {
+  .profile-actions .profile-button {
     width: 100%;
     margin-bottom: 0.5rem;
   }
 
-  .profile-actions .btn.ms-2 {
-    margin-left: 0 !important;
+  .profile-modal {
+    max-width: 100%;
+    border-radius: 0.75rem;
+  }
+
+  .profile-child-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-child-card {
+    max-width: 100%;
+  }
+
+  .profile-device-button {
+    width: 100%;
   }
 }

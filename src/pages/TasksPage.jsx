@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
 import TaskListCard from '../components/TaskListCard';
 import TasksList from '../components/TasksList';
 import AddTaskForm from './forms/AddTaskForm';
@@ -14,22 +13,22 @@ function TasksPage() {
         <div className="tasks-page-col">
           <div className="tasks-page-header">
             <h2 className="tasks-page-title">Tasks</h2>
-            <Button 
-              variant="success" 
+            <button
+              type="button"
               onClick={() => setShowAddTaskModal(true)}
               className="tasks-page-add-button"
             >
               ➕ Add Task
-            </Button>
+            </button>
           </div>
           <TaskListCard>
             <TasksList />
           </TaskListCard>
         </div>
       </div>
-      <AddTaskForm 
-        show={showAddTaskModal} 
-        onHide={() => setShowAddTaskModal(false)} 
+      <AddTaskForm
+        show={showAddTaskModal}
+        onHide={() => setShowAddTaskModal(false)}
       />
     </div>
   );

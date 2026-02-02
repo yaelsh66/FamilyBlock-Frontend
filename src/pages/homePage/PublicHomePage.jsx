@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import './PublicHomePage.css';
 
 function PublicHomePage() {
@@ -42,31 +41,31 @@ function PublicHomePage() {
       step: '1',
       title: 'Set Up Your Family',
       description: 'Create accounts for parents and children. Install the desktop app on your child\'s Windows computer or laptop.',
-      imagePlaceholder: 'hero-setup', // NEW IMAGE NEEDED: Family setup screen or installation process
+      imagePlaceholder: 'hero-setup',
     },
     {
       step: '2',
       title: 'Configure Controls',
       description: 'Block Windows apps and websites, set daily time limits, and create schedules for school time, bedtime, and more.',
-      imagePlaceholder: 'control-panel', // NEW IMAGE NEEDED: Parent control dashboard showing blocking options
+      imagePlaceholder: 'control-panel',
     },
     {
       step: '3',
       title: 'Create Tasks',
       description: 'Any family member can create tasks with time rewards. Assign tasks to children with specific time values.',
-      imagePlaceholder: 'create-task', // NEW IMAGE NEEDED: Task creation interface
+      imagePlaceholder: 'create-task',
     },
     {
       step: '4',
       title: 'Complete & Submit',
       description: 'Children complete assigned tasks and submit them for parent approval. Track pending approvals in real-time.',
-      imagePlaceholder: 'submit-task', // NEW IMAGE NEEDED: Child submitting completed task
+      imagePlaceholder: 'submit-task',
     },
     {
       step: '5',
       title: 'Approve & Earn Time',
       description: 'Parents review and approve or reject task completions. Approved tasks automatically add time to the child\'s daily limit.',
-      imagePlaceholder: 'approve-task', // NEW IMAGE NEEDED: Parent approval interface showing approve/reject buttons
+      imagePlaceholder: 'approve-task',
     },
   ];
 
@@ -74,46 +73,34 @@ function PublicHomePage() {
     <div className="public-home-page">
       {/* Hero Section */}
       <section className="hero-section">
-        <Container>
-          <Row className="align-items-center min-vh-50">
-            <Col lg={6} className="hero-content">
-              <Badge bg="primary" className="hero-badge mb-3">
+        <div className="container">
+          <div className="hero-row">
+            <div className="hero-content">
+              <span className="hero-badge">
                 🖥️ Desktop Parental Control
-              </Badge>
+              </span>
               <h1 className="hero-title">
                 Complete Control Over Your <span className="highlight">Child's Computer</span>
               </h1>
               <p className="hero-description">
-                Block Windows apps and websites, set daily time limits, create schedules, and reward tasks. 
+                Block Windows apps and websites, set daily time limits, create schedules, and reward tasks.
                 Powerful parental control for Windows desktops and laptops with task-based screen time rewards.
               </p>
               <div className="hero-cta">
-                <Button 
-                  as={Link} 
-                  to="/signup" 
-                  variant="primary" 
-                  size="lg" 
-                  className="me-3 mb-2"
-                >
+                <Link to="/signup" className="btn btn-primary btn-lg">
                   🚀 Get Started Free
-                </Button>
-                <Button 
-                  as={Link} 
-                  to="/login" 
-                  variant="outline-primary" 
-                  size="lg"
-                  className="mb-2"
-                >
+                </Link>
+                <Link to="/login" className="btn btn-outline-primary btn-lg">
                   🔑 Login
-                </Button>
+                </Link>
               </div>
-              <div className="hero-demo mt-4">
-                <small className="text-muted">
+              <div className="hero-demo">
+                <small>
                   <strong>Try it now:</strong> Parent: a@a.com / Child: b@b.com | Password: 098765
                 </small>
               </div>
-            </Col>
-            <Col lg={6} className="hero-image-col">
+            </div>
+            <div className="hero-image-col">
               <div className="hero-image-wrapper">
                 <div className="floating-card card-1">
                   <div className="card-icon">🚫</div>
@@ -128,100 +115,81 @@ function PublicHomePage() {
                   <div className="card-text">Task Approved</div>
                 </div>
               </div>
-            </Col>
-          </Row>
-        </Container>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="how-it-works-section py-5">
-        <Container>
-          <Row>
-            <Col className="text-center mb-5">
-              <h2 className="section-title">How It Works</h2>
-              <p className="section-subtitle">
-                Complete desktop control and task-based rewards. Set up in minutes and manage from anywhere.
-              </p>
-            </Col>
-          </Row>
+      <section className="how-it-works-section">
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title">How It Works</h2>
+            <p className="section-subtitle">
+              Complete desktop control and task-based rewards. Set up in minutes and manage from anywhere.
+            </p>
+          </div>
           <div className="how-it-works-grid">
             {howItWorks.map((item, index) => (
-              <Card key={index} className="how-it-works-card h-100">
-                  <div className="step-number">{item.step}</div>
-                  <div className="how-it-works-image-placeholder">
-                    {/* NEW IMAGE NEEDED: {item.imagePlaceholder} */}
-                    <div className="placeholder-content">
-                      <div className="placeholder-icon">📷</div>
-                      <div className="placeholder-text">Image: {item.imagePlaceholder}</div>
-                    </div>
+              <article key={index} className="how-it-works-card">
+                <div className="step-number">{item.step}</div>
+                <div className="how-it-works-image-placeholder">
+                  <div className="placeholder-content">
+                    <div className="placeholder-icon">📷</div>
+                    <div className="placeholder-text">Image: {item.imagePlaceholder}</div>
                   </div>
-                  <Card.Body>
-                    <Card.Title className="how-it-works-title">{item.title}</Card.Title>
-                    <Card.Text className="how-it-works-text">{item.description}</Card.Text>
-                  </Card.Body>
-                </Card>
+                </div>
+                <div className="how-it-works-card-body">
+                  <h3 className="how-it-works-title">{item.title}</h3>
+                  <p className="how-it-works-text">{item.description}</p>
+                </div>
+              </article>
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* Features Section */}
-      <section className="features-section py-5 bg-light">
-        <Container>
-          <Row>
-            <Col className="text-center mb-5">
-              <h2 className="section-title">Powerful Features</h2>
-              <p className="section-subtitle">
-                Complete desktop parental control with task-based rewards. Everything you need to manage your child's computer usage.
-              </p>
-            </Col>
-          </Row>
-          <Row className="g-4">
+      <section className="features-section">
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title">Powerful Features</h2>
+            <p className="section-subtitle">
+              Complete desktop parental control with task-based rewards. Everything you need to manage your child's computer usage.
+            </p>
+          </div>
+          <div className="features-grid">
             {features.map((feature, index) => (
-              <Col key={index} xs={12} md={6} lg={4}>
-                <Card className="feature-card h-100">
-                  <Card.Body>
-                    <div className="feature-icon">{feature.icon}</div>
-                    <Card.Title className="feature-title">{feature.title}</Card.Title>
-                    <Card.Text className="feature-text">{feature.description}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
+              <article key={index} className="feature-card">
+                <div className="feature-card-body">
+                  <div className="feature-icon">{feature.icon}</div>
+                  <h3 className="feature-title">{feature.title}</h3>
+                  <p className="feature-text">{feature.description}</p>
+                </div>
+              </article>
             ))}
-          </Row>
-        </Container>
+          </div>
+        </div>
       </section>
 
       {/* CTA Section */}
-      <section className="cta-section py-5">
-        <Container>
-          <Row>
-            <Col className="text-center">
-              <h2 className="cta-title">Ready to Take Control?</h2>
-              <p className="cta-description mb-4">
-                Join families who are already using FamilyBlock to control their children's desktop usage and reward responsible behavior.
-              </p>
-              <Button 
-                as={Link} 
-                to="/signup" 
-                variant="primary" 
-                size="lg"
-                className="me-3 mb-2"
-              >
+      <section className="cta-section">
+        <div className="container">
+          <div className="cta-content">
+            <h2 className="cta-title">Ready to Take Control?</h2>
+            <p className="cta-description">
+              Join families who are already using FamilyBlock to control their children's desktop usage and reward responsible behavior.
+            </p>
+            <div className="cta-buttons">
+              <Link to="/signup" className="btn btn-primary btn-lg">
                 🚀 Create Free Account
-              </Button>
-              <Button 
-                as={Link} 
-                to="/login" 
-                variant="outline-light" 
-                size="lg"
-                className="mb-2"
-              >
+              </Link>
+              <Link to="/login" className="btn btn-outline-light btn-lg">
                 🔑 Login to Existing Account
-              </Button>
-            </Col>
-          </Row>
-        </Container>
+              </Link>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

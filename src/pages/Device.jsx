@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Container, Card, Button, Alert, Spinner } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
+import {
   getDevicesApi,
   deleteDeviceApi
 } from '../api/deviceApi';
@@ -30,7 +29,6 @@ function Device() {
       setLoading(true);
       const devicesData = await getDevicesApi(childId, user.token);
       setDevices(devicesData);
-      
     } catch (err) {
       console.error('Failed to load device data:', err);
       setError('Failed to load device information');
@@ -60,7 +58,6 @@ function Device() {
       setSaving(true);
       await deleteDeviceApi(childId, deviceId, user.token);
       setError('');
-      // Refresh the device list
       await fetchData();
     } catch (err) {
       console.error('Failed to delete device:', err);
@@ -70,70 +67,83 @@ function Device() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="device-loading">
+        <div className="device-spinner" aria-hidden="true" />
+        <span className="device-loading-text">Loading...</span>
+      </div>
+    );
+  }
+
   return (
     <>
-      {loading ? (
-        <Container className="mt-5 text-center">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </Container>
-      ) : (
-        <Container className="device-container mt-5">
-          <Card className="device-card">
-        <Card.Header className="device-header">
-          <div className="d-flex justify-content-between align-items-center">
+      <div className="device-container">
+        <div className="device-card">
+          <header className="device-header">
             <h2>📱 Device Control</h2>
-            <div className="d-flex gap-2">
-              <Button variant="success" onClick={handleOpenNewDeviceModal}>
+            <div className="device-header-actions">
+              <button
+                type="button"
+                className="device-btn device-btn-primary"
+                onClick={handleOpenNewDeviceModal}
+              >
                 ➕ New Device
-              </Button>
-              <Button variant="secondary" onClick={() => navigate('/profile')}>
+              </button>
+              <button
+                type="button"
+                className="device-btn device-btn-secondary"
+                onClick={() => navigate('/profile')}
+              >
                 ← Back to Profile
-              </Button>
+              </button>
             </div>
-          </div>
-        </Card.Header>
-        <Card.Body>
-          {error && (
-            <Alert variant="danger" dismissible onClose={() => setError('')}>
-              {error}
-            </Alert>
-          )}
+          </header>
 
-          <div className="device-control-section mb-4">
-            <h4>Child Devices</h4>
-            <div className="device-list">
-              {!Array.isArray(devices) || devices.length === 0 ? (
-                <p className="text-muted mb-0">No devices yet. Add one with &quot;➕ New Device&quot; above.</p>
-              ) : (
-                devices.map((device) => (
-                  <div key={device.id} className="device-item child-device-item">
-                    <span className="me-2">📱</span>
-                    <span>{device.name || 'Unnamed device'}</span>
-                    {device.deviceId && (
-                      <small className="text-muted ms-2">({device.deviceId})</small>
-                    )}
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      className="ms-auto"
-                      onClick={() => handleDeleteDevice(device.deviceId || device.id)}
-                      disabled={saving}
-                    >
-                      🗑️ Delete
-                    </Button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <div className="device-body">
+            {error && (
+              <div className="device-alert" role="alert">
+                <span>{error}</span>
+                <button
+                  type="button"
+                  className="device-alert-dismiss"
+                  onClick={() => setError('')}
+                  aria-label="Dismiss"
+                >
+                  ×
+                </button>
+              </div>
+            )}
 
-          
-        </Card.Body>
-      </Card>
-        </Container>
-      )}
+            <section className="device-control-section">
+              <h4>Child Devices</h4>
+              <div className="device-list">
+                {!Array.isArray(devices) || devices.length === 0 ? (
+                  <p className="device-empty">No devices yet. Add one with &quot;➕ New Device&quot; above.</p>
+                ) : (
+                  devices.map((device) => (
+                    <div key={device.id} className="device-item child-device-item">
+                      <span className="device-item-icon">📱</span>
+                      <span className="device-item-name">{device.name || 'Unnamed device'}</span>
+                      {device.deviceId && (
+                        <small className="device-item-id">({device.deviceId})</small>
+                      )}
+                      <button
+                        type="button"
+                        className="device-btn device-btn-danger device-btn-sm"
+                        onClick={() => handleDeleteDevice(device.deviceId || device.id)}
+                        disabled={saving}
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
 
       <NewDeviceModal
         show={showNewDeviceModal}

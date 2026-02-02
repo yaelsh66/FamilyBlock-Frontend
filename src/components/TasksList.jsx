@@ -1,5 +1,5 @@
 // src/components/TasksList.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 import TaskItem from './TaskItem';

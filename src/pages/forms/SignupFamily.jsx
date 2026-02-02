@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
-import { signUpWithEmailAndPassword } from '../../api/firebaseAuth';
-import { createUser } from '../../api/firebaseAuth';
+import { signUpWithEmailAndPassword, createUser } from '../../api/firebaseAuth';
+import './SignupFamily.css';
 
 function SignupFamily() {
   const [familyId, setFamilyId] = useState('');
@@ -54,100 +53,118 @@ function SignupFamily() {
   };
 
   return (
-    <Container className="mt-5" style={{ maxWidth: '700px' }}>
-      <h2 className="mb-4">Sign Up a Family</h2>
+    <div className="signup-family-container">
+      <h2 className="signup-family-title">Sign Up a Family</h2>
 
-      {message && <Alert variant="success">{message}</Alert>}
-      {error && <Alert variant="danger">{error}</Alert>}
+      {message && <div className="signup-family-alert signup-family-alert-success">{message}</div>}
+      {error && <div className="signup-family-alert signup-family-alert-error">{error}</div>}
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="familyId" className="mb-4">
-          <Form.Label>Family ID (can be anything like "smith123")</Form.Label>
-          <Form.Control
+      <form onSubmit={handleSubmit} className="signup-family-form">
+        <div className="signup-family-group">
+          <label htmlFor="familyId" className="signup-family-label">
+            Family ID (can be anything like "smith123")
+          </label>
+          <input
+            id="familyId"
             type="text"
+            className="signup-family-input"
             value={familyId}
             onChange={(e) => setFamilyId(e.target.value)}
             required
           />
-        </Form.Group>
+        </div>
 
-        <h5>Parents</h5>
+        <h5 className="signup-family-section-title">Parents</h5>
         {parents.map((parent, idx) => (
-          <Row key={`parent-${idx}`} className="mb-3">
-            <Col>
-              <Form.Control
+          <div key={`parent-${idx}`} className="signup-family-user-row">
+            <div className="signup-family-user-field">
+              <input
                 type="text"
                 placeholder="Parent Name"
+                className="signup-family-input"
                 value={parent.name}
                 onChange={(e) => handleChange('parent', idx, 'name', e.target.value)}
                 required
               />
-            </Col>
-            <Col>
-              <Form.Control
+            </div>
+            <div className="signup-family-user-field">
+              <input
                 type="email"
                 placeholder="Parent Email"
+                className="signup-family-input"
                 value={parent.email}
                 onChange={(e) => handleChange('parent', idx, 'email', e.target.value)}
                 required
               />
-            </Col>
-            <Col>
-              <Form.Control
+            </div>
+            <div className="signup-family-user-field">
+              <input
                 type="password"
                 placeholder="Password"
+                className="signup-family-input"
                 value={parent.password}
                 onChange={(e) => handleChange('parent', idx, 'password', e.target.value)}
                 required
               />
-            </Col>
-          </Row>
+            </div>
+          </div>
         ))}
-        <Button variant="outline-secondary" onClick={() => handleAdd('parent')} className="mb-4">
+        <button
+          type="button"
+          onClick={() => handleAdd('parent')}
+          className="signup-family-button signup-family-button-secondary"
+        >
           + Add Parent
-        </Button>
+        </button>
 
-        <h5>Children</h5>
+        <h5 className="signup-family-section-title">Children</h5>
         {children.map((child, idx) => (
-          <Row key={`child-${idx}`} className="mb-3">
-            <Col>
-              <Form.Control
+          <div key={`child-${idx}`} className="signup-family-user-row">
+            <div className="signup-family-user-field">
+              <input
                 type="text"
                 placeholder="Child Name"
+                className="signup-family-input"
                 value={child.name}
                 onChange={(e) => handleChange('child', idx, 'name', e.target.value)}
                 required
               />
-            </Col>
-            <Col>
-              <Form.Control
+            </div>
+            <div className="signup-family-user-field">
+              <input
                 type="email"
                 placeholder="Child Email"
+                className="signup-family-input"
                 value={child.email}
                 onChange={(e) => handleChange('child', idx, 'email', e.target.value)}
                 required
               />
-            </Col>
-            <Col>
-              <Form.Control
+            </div>
+            <div className="signup-family-user-field">
+              <input
                 type="password"
                 placeholder="Password"
+                className="signup-family-input"
                 value={child.password}
                 onChange={(e) => handleChange('child', idx, 'password', e.target.value)}
                 required
               />
-            </Col>
-          </Row>
+            </div>
+          </div>
         ))}
-        <Button variant="outline-secondary" onClick={() => handleAdd('child')} className="mb-4">
+        <button
+          type="button"
+          onClick={() => handleAdd('child')}
+          className="signup-family-button signup-family-button-secondary"
+        >
           + Add Child
-        </Button>
+        </button>
 
-        <Button variant="primary" type="submit" className="w-100">
+        <button type="submit" className="signup-family-button signup-family-button-primary signup-family-submit">
           Sign Up Family
-        </Button>
-      </Form>
-    </Container>
+        </button>
+      </form>
+    </div>
   );
 }
 

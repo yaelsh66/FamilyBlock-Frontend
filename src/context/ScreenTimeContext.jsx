@@ -1,6 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { useAuth } from './AuthContext';
-import { updateChildTime } from '../api/firebaseUser';
 import { getUserData  } from '../api/firebaseUser';
 import {withdrawTime, withdrawTimeStop} from '../api/firebaseTasks'
 const ScreenTimeContext = createContext();
@@ -20,21 +19,15 @@ function screenTimeReducer(state, action) {
         pendingScreenTime: action.payload.pendingScreenTime,
         loading: false,
       };
-    case 'ADD_PENDING':
-      return {
-        ...state,
-        pendingScreenTime: state.pendingScreenTime + action.payload,
-      };
-    case 'APPROVE_PENDING':
-      return {
-        ...state,
-        totalScreenTime: state.totalScreenTime + state.pendingScreenTime,
-        pendingScreenTime: 0,
-      };
     case 'WITHDRAW':
       return {
         ...state,
         totalScreenTime: Math.max(0, state.totalScreenTime - action.payload),
+      };
+    case 'ADD_PENDING':
+      return {
+        ...state,
+        pendingScreenTime: state.pendingScreenTime + (action.payload || 0),
       };
     default:
       return state;
@@ -50,19 +43,11 @@ export const ScreenTimeProvider = ({ children }) => {
     pendingScreenTime: 0,
   });
 
-  const debounceRef = useRef(null);
-
-  // 🔁 Debounced Firestore update
-  
-
-
   const refreshScreenTime = async () => {
     if (!user?.uid || !user?.token) return;
 
     try {
       const fields = await getUserData(user.uid, user.token);
-      console.log("total_fields: ", fields.totalTime);
-      console.log("pending_fields: ", fields.pendingTime);
       // Parse Firestore document fields safely
       dispatch({
         type: 'INIT',
@@ -110,16 +95,8 @@ export const ScreenTimeProvider = ({ children }) => {
     }
   };
 
-  const addToPendingScreenTime = async (minutes) => {
-    const newPending = state.pendingScreenTime + minutes;
-    dispatch({ type: 'ADD_PENDING', payload: minutes });
-    
-  };
-
-  const approvePendingScreenTime = async () => {
-    const newTotal = state.totalScreenTime + state.pendingScreenTime;
-    dispatch({ type: 'APPROVE_PENDING' });
-    updateScreenTimeInFirestore(newTotal, 0);
+  const addToPendingScreenTime = (minutes) => {
+    dispatch({ type: 'ADD_PENDING', payload: minutes ?? 0 });
   };
 
   // 🧠 Fetch time data from backend when user logs in
@@ -156,11 +133,10 @@ export const ScreenTimeProvider = ({ children }) => {
         totalScreenTime: state.totalScreenTime,
         pendingScreenTime: state.pendingScreenTime,
         loading: state.loading,
-        addToPendingScreenTime,
-        approvePendingScreenTime,
         withdrawScreenTime,
         refreshScreenTime,
         withdrawScreenTimeStop,
+        addToPendingScreenTime,
       }}
     >
       {children}

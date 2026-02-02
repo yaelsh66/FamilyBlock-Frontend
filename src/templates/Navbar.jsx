@@ -76,7 +76,7 @@ function ColorSchemesExample() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/" className="navbar-brand">Home</Link>
+        <Link to={getHomeLink()} className="navbar-brand">Home</Link>
         
         <button 
           className="navbar-toggle"
@@ -92,7 +92,6 @@ function ColorSchemesExample() {
           <div className="navbar-nav">
             {user && (
               <>
-                <Link to={getHomeLink()} className="nav-link" onClick={() => setIsMenuOpen(false)}>My Home</Link>
                 <Link to="/tasksList" className="nav-link" onClick={() => setIsMenuOpen(false)}>Tasks</Link>
                 {user.role === 'CHILD' && (
                   <Link to="/child/tasks" className="nav-link" onClick={() => setIsMenuOpen(false)}>My Tasks</Link>

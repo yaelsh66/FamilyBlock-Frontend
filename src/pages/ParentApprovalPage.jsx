@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Spinner, Alert, Card, Button } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { getKidsByFamily } from '../api/firebaseTasks';
 import { useCompletions } from '../context/CompletionsContext'; // your completions context
@@ -67,63 +66,75 @@ function ParentApprovalPage() {
 
   if (loading || completionsLoading) {
     return (
-      <Container className="mt-5 text-center">
-        <Spinner animation="border" />
-      </Container>
+      <div className="approval-page-container">
+        <div className="approval-loading" aria-label="Loading">
+          <div className="approval-loading-spinner" />
+          <span className="approval-loading-text">Loading...</span>
+        </div>
+      </div>
     );
   }
 
   if (!user || user.role !== 'PARENT') {
     return (
-      <Container className="mt-5">
-        <Alert variant="warning">🚫 Please log in as a parent to see this page.</Alert>
-      </Container>
+      <div className="approval-page-container">
+        <div className="approval-message approval-message-warning">
+          🚫 Please log in as a parent to see this page.
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container className="mt-0">
+    <div className="approval-page-container">
       <h2 className="approval-page-header">Pending Tasks for Approval</h2>
-      {(error || completionsError) && <Alert variant="danger">{error || completionsError}</Alert>}
-      <Row>
-        {children.length === 0 && <p>No children found in your family.</p>}
+      {(error || completionsError) && (
+        <div className="approval-message approval-message-error">
+          {error || completionsError}
+        </div>
+      )}
+      <div className="approval-cards">
+        {children.length === 0 && (
+          <p className="approval-empty-state">No children found in your family.</p>
+        )}
         {children.map((child) => (
-          <Col key={child.uid} md={4} className="mb-4">
-            <Card className="approval-card">
-              
-              <Card.Header className="approval-card-header">{child.nickname || child.email || child.uid}</Card.Header>
-              <Card.Body className="approval-card-body" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          <div key={child.uid} className="approval-card-wrapper">
+            <div className="approval-card">
+              <div className="approval-card-header">
+                {child.nickname || child.email || child.uid}
+              </div>
+              <div className="approval-card-body">
                 {completionsByChild[child.uid]?.length ? (
                   completionsByChild[child.uid].map((task) => (
-                    <div key={task.taskId} className="mb-3">
+                    <div key={task.taskId} className="approval-task-item">
                       <TaskItem task={task} />
-                      <div className="d-flex justify-content-between mt-2">
-                        <Button
-                          variant="success"
-                          size="sm"
+                      <div className="approval-card-actions">
+                        <button
+                          type="button"
+                          className="approval-button approval-button-approve"
                           onClick={() =>
                             handleApproval(child.uid, task.taskId, task.time, true)
                           }
                         >
                           ✅ Approve
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
+                        </button>
+                        <button
+                          type="button"
+                          className="approval-button approval-button-reject"
                           onClick={() =>
                             handleApproval(child.uid, task.taskId, task.time, false)
                           }
                         >
                           ❌ Reject
-                        </Button>
+                        </button>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p>No tasks waiting for approval.</p>
+                  <p className="approval-empty-state">No tasks waiting for approval.</p>
                 )}
-              </Card.Body>
-              <Card.Footer className="approval-card-footer">
+              </div>
+              <div className="approval-card-footer">
                 <div className="time-info total-time">
                   <strong>Total Time:</strong>
                   <span className="time-value">{child.totalTime || 0} mins</span>
@@ -132,12 +143,12 @@ function ParentApprovalPage() {
                   <strong>Pending Time:</strong>
                   <span className="time-value">{child.pendingTime || 0} mins</span>
                 </div>
-              </Card.Footer>
-            </Card>
-          </Col>
+              </div>
+            </div>
+          </div>
         ))}
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 }
 
