@@ -26,7 +26,7 @@ export const getUserData = async (uid, idToken) => {
 
 // 🔄 Update child's total and pending time
 export const updateChildTime = async (totalTime, pendingTime, idToken) => {
-  const url = '${BACKEND_BASE_URL}/update_time';
+  const url = `${BACKEND_BASE_URL}/update_time`;
   const payload = {
     totalTime: totalTime,
     pendingTime: pendingTime
