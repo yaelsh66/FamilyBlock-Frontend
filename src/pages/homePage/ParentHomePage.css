@@ -185,10 +185,12 @@
 
   .parent-home-sidebar {
     width: 100%;
+    order: 2; /* Parent Control shows after Screen Time on phone */
   }
 
   .parent-home-main {
     width: 100%;
+    order: 1; /* Screen Time shows first on phone */
   }
 
   .parent-home-main-content {

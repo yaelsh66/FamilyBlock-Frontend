@@ -53,6 +53,7 @@ function authReducer(state, action) {
       const updatedProfileUser = {
         ...state.user,
         nickname: action.payload.nickname ?? state.user.nickname,
+        name: action.payload.name ?? state.user.name,
       };
       localStorage.setItem('user', JSON.stringify(updatedProfileUser));
       return { user: updatedProfileUser, loading: false };

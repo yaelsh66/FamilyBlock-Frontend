@@ -7,7 +7,7 @@ import './ControlScreenTime.css';
 function ControlScreenTime({ selectedChildId, childrenList = [] }) {
   const [totalScreenTime, setTotalScreenTime] = useState();
   const [timeToAddReduce, setTimeToAddReduce] = useState(0);
-  const [isBlocked, setIsBlocked] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
   const { user, loading } = useAuth();
   const [childId, setChildId] = useState(null);
   const STEP_MINUTES = 5;
@@ -29,50 +29,50 @@ function ControlScreenTime({ selectedChildId, childrenList = [] }) {
       setTotalScreenTime(total);
     };
 
-    const fetchIsBlocked = async () => {
+    const fetchIsRunning = async () => {
       if (!selectedChildId) {
-        setIsBlocked(false);
+        setIsRunning(false);
         return;
       }
       try{
         const res = await getIsRunningApi(childId, user.token);
-        const isRunning = res.isRunning;
-        console.log('isRunning: ', isRunning);
-        setIsBlocked(isRunning);
+        const running = res.isRunning;
+        console.log('isRunning: ', running);
+        setIsRunning(running);
       }catch(error){
         console.error('Failed to get is running:', error);
-        setIsBlocked(false);
+        setIsRunning(false);
       }
     };
 
     fetchTotalScreenTime();
-    fetchIsBlocked();
+    fetchIsRunning();
   }, [selectedChildId]);
 
   
-  const handleBlock =async () => {
-    setIsBlocked(true);
+  const handleBlock = async () => {
+    setIsRunning(false);
     try{
       await blockDeviceApi(childId, user.token);
     }catch(error){
       console.error('Failed to block device:', error);
-      setIsBlocked(false);
+      setIsRunning(true);
     }
     console.log('Block', selectedChildId);
   };
 
   const handleUnblock = async () => {
-    setIsBlocked(false);
+    setIsRunning(true);
     try{
       if(totalScreenTime <= 0){
         alert('Please add more time to unlock the device.');
-        setIsBlocked(true);
+        setIsRunning(false);
         return;
       }
       await unblockDeviceApi(childId, user.token);
     }catch(error){
       console.error('Failed to block device:', error);
-      setIsBlocked(false);
+      setIsRunning(false);
     }
     console.log('Unblock', selectedChildId);
   };
@@ -163,7 +163,7 @@ function ControlScreenTime({ selectedChildId, childrenList = [] }) {
               <button
                 type="button"
                 onClick={handleBlock}
-                disabled={isBlocked || !selectedChildId}
+                disabled={!isRunning || !selectedChildId}
                 className="control-button control-button-block"
               >
                 Block
@@ -171,7 +171,7 @@ function ControlScreenTime({ selectedChildId, childrenList = [] }) {
               <button
                 type="button"
                 onClick={handleUnblock}
-                disabled={!isBlocked || !selectedChildId}
+                disabled={isRunning || !selectedChildId}
                 className="control-button control-button-unblock"
               >
                 Unblock

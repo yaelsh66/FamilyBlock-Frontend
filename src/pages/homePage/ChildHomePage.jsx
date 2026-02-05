@@ -1,5 +1,5 @@
 // src/pages/ChildHomePage.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import AmountBox from '../../components/AmountBox';
@@ -7,16 +7,37 @@ import { useScreenTime } from '../../context/ScreenTimeContext';
 import { useTaskContext } from '../../context/TaskContext';
 import TaskItem from '../../components/TaskItem';
 import { submitCompletion } from '../../api/firebaseTasks';
+import { getIsRunningApi } from '../../api/deviceApi';
 import './ChildHomePage.css';
 
 function ChildHomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { totalScreenTime, pendingScreenTime, withdrawScreenTime, withdrawScreenTimeStop, refreshScreenTime, addToPendingScreenTime } = useScreenTime();
+  const { totalScreenTime, pendingScreenTime, withdrawScreenTime, withdrawScreenTimeStop,
+    refreshScreenTime, addToPendingScreenTime } = useScreenTime();
   const { assignedTasks, refreshTasks } = useTaskContext();
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [comment, setComment] = useState('');
+  const [isRunning, setIsRunning] = useState(false);
+
+  useEffect(() => {
+    const fetchIsRunning = async () => {
+      if (!user?.id || !user?.token) {
+        setIsRunning(false);
+        return;
+      }
+      const childId = Number(user.id);
+      try {
+        const res = await getIsRunningApi(childId, user.token);
+        setIsRunning(res.isRunning ?? false);
+      } catch (error) {
+        console.error('Failed to get is running:', error);
+        setIsRunning(false);
+      }
+    };
+    fetchIsRunning();
+  }, [user?.id, user?.token]);
 
   
 
@@ -26,28 +47,26 @@ function ChildHomePage() {
 
   const handleStartTime = async () => {
     const minutes = totalScreenTime;
+    setIsRunning(true);
     try {
- 
       const res = await withdrawScreenTime(minutes);
-      alert(res.response); // ✅ update local state and database
-    //  alert(`✅ You strted time`);
-  
+      alert(res.response);
     } catch (err) {
       console.error(err);
-      alert('❌ strted time failed.');
+      alert('❌ started time failed.');
+      setIsRunning(false);
     }
   };
 
   const handleStopTime = async () => {
-    
+    setIsRunning(false);
     try {
- 
-      await withdrawScreenTimeStop(); // ✅ update local state and database
-      alert(`✅ You stop time`);
-  
+      await withdrawScreenTimeStop();
+      alert(`✅ You stopped time`);
     } catch (err) {
       console.error(err);
       alert('❌ stop time failed.');
+      setIsRunning(true);
     }
   };
 
@@ -124,14 +143,14 @@ function ChildHomePage() {
             <button
                 className="child-home-button btn-success"
                 onClick={() => handleStartTime()}
-                disabled={totalScreenTime <= 0}
+                disabled={isRunning || totalScreenTime <= 0}
               >
                 Start Time
               </button>
               <button
                 className="child-home-button btn-danger"
                 onClick={() => handleStopTime()}
-                disabled={totalScreenTime <= 0}
+                disabled={!isRunning}
               >
                 Stop Time
               </button>
