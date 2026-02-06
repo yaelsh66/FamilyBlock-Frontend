@@ -17,6 +17,7 @@ import ParentControl from './pages/ParentControl.jsx';
 import ParentApprovalPage from './pages/ParentApprovalPage.jsx';
 import Profile from './pages/Profile.jsx';
 import Device from './pages/Device.jsx';
+import TaskHistoryPage from './pages/TaskHistoryPage.jsx';
 function App() {
   return (
     <div>
@@ -39,6 +40,8 @@ function App() {
                 <Route path="/parent/approval" element={<ParentApprovalPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/device/:childId" element={<Device />} />
+                <Route path="/parent/history" element={<TaskHistoryPage />} />
+                <Route path="/child/history" element={<TaskHistoryPage />} />
               </Routes>
             </BackgroundWrapper>
           

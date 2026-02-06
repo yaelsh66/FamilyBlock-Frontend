@@ -1,0 +1,125 @@
+.task-history-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2rem;
+}
+
+.task-history-title {
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  padding: 0.875rem 0;
+  text-align: left;
+  color: #2d3748;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.task-history-message {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.task-history-message-warning {
+  background-color: #fefcbf;
+  color: #744210;
+  border: 1px solid #faf089;
+}
+
+.task-history-message-error {
+  background-color: #fed7d7;
+  color: #822727;
+  border: 1px solid #feb2b2;
+}
+
+.task-history-filters {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.task-history-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.task-history-select {
+  min-width: 220px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+}
+
+.task-history-loading {
+  padding: 2rem 0;
+  text-align: center;
+  color: #4a5568;
+}
+
+.task-history-table-wrapper {
+  margin-top: 0.5rem;
+  overflow-x: auto;
+}
+
+.task-history-empty {
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.task-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.task-history-table th,
+.task-history-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.task-history-table th {
+  background-color: #f7fafc;
+  font-weight: 600;
+  color: #4a5568;
+  white-space: nowrap;
+}
+
+.task-history-table tr:nth-child(even) td {
+  background-color: #fdfdfd;
+}
+
+.task-history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.task-history-table td:nth-child(1) {
+  white-space: nowrap;
+}
+
+.task-history-table td:nth-child(2) {
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .task-history-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .task-history-select {
+    width: 100%;
+  }
+}
+

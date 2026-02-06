@@ -91,12 +91,13 @@ export const submitCompletion = async (taskId, comment = '', idToken) => {
   
 };
 
-export const approveCompletion = async (completionId, childId, time, idToken) => {
+export const approveCompletion = async (completionId, childId, time, parentComment = '', idToken) => {
   const url = `${BACKEND_BASE_URL}/approve_completion`;
   const payload = {
     completionId: completionId,
     childId: childId,
     time: time,
+    parentComment: parentComment || '',
   };
   try{
   const res = await axios.post(url, payload, {
@@ -112,12 +113,13 @@ export const approveCompletion = async (completionId, childId, time, idToken) =>
 }
 
 
-export const rejectCompletion = async (completionId, childId, time, idToken) => {
+export const rejectCompletion = async (completionId, childId, time, parentComment = '', idToken) => {
   const url = `${BACKEND_BASE_URL}/reject_completion`;
   const payload = {
     completionId: completionId,
     childId: childId,
     time: time,
+    parentComment: parentComment || '',
   };
   try{
   const res = await axios.post(url, payload, {
@@ -258,3 +260,64 @@ export const withdrawTimeStop = async (idToken) => {
     };
 }
 
+// 📜 Task history for a specific child (parent view)
+export const getTaskHistoryForChild = async (childId, idToken) => {
+  const url = `${BACKEND_BASE_URL}/family_task_history`;
+  const payload = {
+    childId: childId,
+  };
+  try {
+    const res = await axios.post(url, payload, {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+    console.log('FETCH TASK HISTORY FOR CHILD RESPONSE:', res.data);
+    const data = res.data;
+    return Array.isArray(data) ? data : (data?.tasks ?? []);
+  } catch (error) {
+    console.error('❌ Failed to fetch task history for child:', error.message);
+    throw error;
+  }
+};
+
+// 📜 Task history for the currently logged-in child
+export const getMyTaskHistory = async (idToken) => {
+  const url = `${BACKEND_BASE_URL}/child_task_history`;
+  try {
+    const res = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+    console.log('FETCH MY TASK HISTORY RESPONSE:', res.data);
+    const data = res.data;
+    return Array.isArray(data) ? data : (data?.tasks ?? []);
+  } catch (error) {
+    console.error('❌ Failed to fetch my task history:', error.message);
+    throw error;
+  }
+};
+
+// ✏️ Allow a child to update their task instance (e.g. comment/status)
+export const updateTaskByChild = async (taskInstanceId, updates, idToken) => {
+  const url = `${BACKEND_BASE_URL}/child_update_task`;
+  const payload = {
+    taskInstanceId,
+    ...updates,
+  };
+
+  try {
+    const res = await axios.patch(url, payload, {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('UPDATE TASK BY CHILD RESPONSE:', res.data);
+    return res.data;
+  } catch (error) {
+    console.error('❌ Failed to update task by child:', error.message);
+    throw error;
+  }
+};

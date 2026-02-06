@@ -11,6 +11,10 @@ function ParentApprovalPage() {
   const { user, loading } = useAuth();
   const [children, setChildren] = useState([]);
   const [error, setError] = useState('');
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editedTimes, setEditedTimes] = useState({});
+  const [editTimeInput, setEditTimeInput] = useState('');
+  const [parentComments, setParentComments] = useState({});
   const {
     completions,
     loading: completionsLoading,
@@ -47,14 +51,43 @@ function ParentApprovalPage() {
     return acc;
   }, {});
 
-  const handleApproval = async (childId, completionId, time, isApproved) => {
+  const getEffectiveTime = (task) => editedTimes[task.taskId] ?? task.time;
+
+  const handleStartEditTime = (task) => {
+    setEditingTaskId(task.taskId);
+    setEditTimeInput(String(getEffectiveTime(task)));
+  };
+
+  const handleSaveEditTime = (taskId) => {
+    const num = Number(editTimeInput);
+    if (!Number.isNaN(num) && num >= 0) {
+      setEditedTimes((prev) => ({ ...prev, [taskId]: num }));
+    }
+    setEditingTaskId(null);
+  };
+
+  const handleCancelEditTime = () => {
+    setEditingTaskId(null);
+  };
+
+  const handleApproval = async (childId, completionId, time, isApproved, parentComment = '') => {
     try {
       if (isApproved) {
-        await approveCompletion(completionId, childId, time);
+        await approveCompletion(completionId, childId, time, parentComment);
       } else {
-        await rejectCompletion(completionId, childId, time);
+        await rejectCompletion(completionId, childId, time, parentComment);
       }
-      // Refresh both the completions list and children list
+      // Clear edited time for this completion and refresh
+      setEditedTimes((prev) => {
+        const next = { ...prev };
+        delete next[completionId];
+        return next;
+      });
+      setParentComments((prev) => {
+        const next = { ...prev };
+        delete next[completionId];
+        return next;
+      });
       await refreshCompletions();
       const familyChildren = await getKidsByFamily(user.familyId, user.token);
       setChildren(familyChildren);
@@ -107,13 +140,83 @@ function ParentApprovalPage() {
                 {completionsByChild[child.uid]?.length ? (
                   completionsByChild[child.uid].map((task) => (
                     <div key={task.taskId} className="approval-task-item">
-                      <TaskItem task={task} />
+                      <TaskItem task={{ ...task, time: getEffectiveTime(task) }} />
+                      {task.childComment && (
+                        <div className="approval-child-comment">
+                          <strong>Child&apos;s comment:</strong> {task.childComment}
+                        </div>
+                      )}
+                      <div className="approval-parent-comment">
+                        <label className="approval-time-label" htmlFor={`parent-comment-${task.taskId}`}>
+                          Parent&apos;s comment (optional):
+                        </label>
+                        <textarea
+                          id={`parent-comment-${task.taskId}`}
+                          className="approval-parent-comment-input"
+                          placeholder="Add a note for your child..."
+                          value={parentComments[task.taskId] || ''}
+                          onChange={(e) =>
+                            setParentComments((prev) => ({
+                              ...prev,
+                              [task.taskId]: e.target.value,
+                            }))
+                          }
+                          rows={2}
+                        />
+                      </div>
+                      <div className="approval-time-row">
+                        {editingTaskId === task.taskId ? (
+                          <>
+                            <label className="approval-time-label">Time (min):</label>
+                            <input
+                              type="number"
+                              className="approval-time-input"
+                              value={editTimeInput}
+                              onChange={(e) => setEditTimeInput(e.target.value)}
+                              min={0}
+                            />
+                            <button
+                              type="button"
+                              className="approval-button approval-button-save"
+                              onClick={() => handleSaveEditTime(task.taskId)}
+                            >
+                              💾 Save
+                            </button>
+                            <button
+                              type="button"
+                              className="approval-button approval-button-cancel"
+                              onClick={handleCancelEditTime}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="approval-time-display">
+                              ⏰ {getEffectiveTime(task)} min
+                            </span>
+                            <button
+                              type="button"
+                              className="approval-button approval-button-update"
+                              onClick={() => handleStartEditTime(task)}
+                            >
+                              ✏️ Update
+                            </button>
+                          </>
+                        )}
+                      </div>
                       <div className="approval-card-actions">
                         <button
                           type="button"
                           className="approval-button approval-button-approve"
                           onClick={() =>
-                            handleApproval(child.uid, task.taskId, task.time, true)
+                            handleApproval(
+                              child.uid,
+                              task.taskId,
+                              getEffectiveTime(task),
+                              true,
+                              parentComments[task.taskId] || ''
+                            )
                           }
                         >
                           ✅ Approve
@@ -122,7 +225,13 @@ function ParentApprovalPage() {
                           type="button"
                           className="approval-button approval-button-reject"
                           onClick={() =>
-                            handleApproval(child.uid, task.taskId, task.time, false)
+                            handleApproval(
+                              child.uid,
+                              task.taskId,
+                              getEffectiveTime(task),
+                              false,
+                              parentComments[task.taskId] || ''
+                            )
                           }
                         >
                           ❌ Reject

@@ -62,9 +62,9 @@ export const CompletionsProvider = ({ children }) => {
   }, [user]);
 
   // Approve a completion
-  const approve = async (completionId, childId, time) => {
+  const approve = async (completionId, childId, time, parentComment = '') => {
     try {
-      await approveCompletion(completionId, childId, time, user.token);
+      await approveCompletion(completionId, childId, time, parentComment, user.token);
       dispatch({ type: 'APPROVE_COMPLETION', payload: completionId });
     } catch (error) {
       console.error('Approve completion failed:', error);
@@ -73,9 +73,9 @@ export const CompletionsProvider = ({ children }) => {
   };
 
   // Reject a completion
-  const reject = async (completionId, childId, time) => {
+  const reject = async (completionId, childId, time, parentComment = '') => {
     try {
-      await rejectCompletion(completionId, childId, time, user.token);
+      await rejectCompletion(completionId, childId, time, parentComment, user.token);
       dispatch({ type: 'REJECT_COMPLETION', payload: completionId });
     } catch (error) {
       console.error('Reject completion failed:', error);

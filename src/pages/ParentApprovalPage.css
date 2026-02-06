@@ -127,6 +127,76 @@
   margin-bottom: 0.75rem;
 }
 
+.approval-child-comment {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: #4a5568;
+  background-color: #f7fafc;
+  border-radius: 6px;
+  border-left: 3px solid #3182ce;
+}
+
+.approval-child-comment strong {
+  color: #2d3748;
+}
+
+.approval-time-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.approval-time-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.approval-time-input {
+  width: 4.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+}
+
+.approval-time-display {
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.approval-button-update {
+  background-color: #ed8936;
+  color: #ffffff;
+}
+
+.approval-button-update:hover {
+  background-color: #dd6b20;
+  box-shadow: 0 1px 3px rgba(237, 137, 54, 0.4);
+}
+
+.approval-button-save {
+  background-color: #3182ce;
+  color: #ffffff;
+}
+
+.approval-button-save:hover {
+  background-color: #2b6cb0;
+  box-shadow: 0 1px 3px rgba(49, 130, 206, 0.4);
+}
+
+.approval-button-cancel {
+  background-color: #718096;
+  color: #ffffff;
+}
+
+.approval-button-cancel:hover {
+  background-color: #4a5568;
+}
+
 .approval-card-actions {
   display: flex;
   justify-content: space-between;
