@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { updateUserData, getUserData } from '../api/firebaseUser';
 import { getKidsByFamily } from '../api/firebaseTasks';
+import { getDailyTimeApi, getScheduleTimesApi } from '../api/timeControlApi';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from '../api/firebaseAuth';
 import NewDeviceModal from '../components/NewDeviceModal';
@@ -23,6 +24,9 @@ function Profile() {
   const [loggingInParent, setLoggingInParent] = useState(false);
   const [showNewDeviceModal, setShowNewDeviceModal] = useState(false);
   const [parentUserForDevice, setParentUserForDevice] = useState(null);
+  const [dailyTimes, setDailyTimes] = useState([]);
+  const [scheduleTimes, setScheduleTimes] = useState([]);
+  const [loadingTimeSettings, setLoadingTimeSettings] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -44,6 +48,33 @@ function Profile() {
       fetchChildren();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!user || user.role !== 'CHILD') return;
+    const childId = user.id || user.uid;
+    if (!childId || !user.token) return;
+
+    const fetchTimeSettings = async () => {
+      setLoadingTimeSettings(true);
+      try {
+        const [dailyList, scheduleList] = await Promise.all([
+          getDailyTimeApi(childId, user.token),
+          getScheduleTimesApi(childId, user.token),
+        ]);
+        setDailyTimes(dailyList || []);
+        setScheduleTimes(scheduleList || []);
+      } catch (e) {
+        console.error('Failed to load time settings', e);
+        setDailyTimes([]);
+        setScheduleTimes([]);
+      } finally {
+        setLoadingTimeSettings(false);
+      }
+    };
+    fetchTimeSettings();
+  }, [user]);
+
+  const weekDays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
   if (!user) {
     return (
@@ -244,6 +275,70 @@ function Profile() {
                     ➕ Add Device (Parent Approval)
                   </button>
                 </div>
+              )}
+
+              {/* Child: Daily Time & Schedule (read-only) */}
+              {user.role === 'CHILD' && (
+                <>
+                  <div className="profile-divider"></div>
+                  <div className="profile-field profile-time-section">
+                    <label className="profile-label profile-time-label">⏱️ My Screen Time Limits</label>
+                    {loadingTimeSettings ? (
+                      <div className="profile-value">Loading...</div>
+                    ) : dailyTimes.length === 0 && scheduleTimes.length === 0 ? (
+                      <div className="profile-value">No limits or schedules set by parent.</div>
+                    ) : (
+                      <div className="profile-time-settings">
+                        {dailyTimes.length > 0 && (
+                          <div className="profile-daily-times">
+                            <h5 className="profile-time-subtitle">Daily Time Limits</h5>
+                            <div className="profile-daily-times-grid">
+                              <div className="profile-daily-times-days-row">
+                                {weekDays.map((day) => (
+                                  <div key={day} className="profile-daily-time-cell">
+                                    <strong>{day.substring(0, 3)}</strong>
+                                  </div>
+                                ))}
+                              </div>
+                              <div className="profile-daily-times-values-row">
+                                {weekDays.map((day) => {
+                                  const dayEntries = dailyTimes.filter(
+                                    (dt) => dt.days && dt.days.includes(day)
+                                  );
+                                  return (
+                                    <div key={day} className="profile-daily-time-cell profile-daily-time-value">
+                                      {dayEntries.length > 0 ? (
+                                        dayEntries.map((dt, i) => (
+                                          <div key={i}>{dt.time || 0} min</div>
+                                        ))
+                                      ) : (
+                                        <div>-</div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {scheduleTimes.length > 0 && (
+                          <div className="profile-schedule-times">
+                            <h5 className="profile-time-subtitle">Blocked Time Slots</h5>
+                            <div className="profile-schedule-time-list">
+                              {scheduleTimes.map((st, index) => (
+                                <div key={index} className="profile-schedule-time-item">
+                                  <div><strong>Days:</strong> {st.days?.join(', ') || 'None'}</div>
+                                  <div><strong>Start:</strong> {st.startTime || st.start || '-'}</div>
+                                  <div><strong>End:</strong> {st.endTime || st.end || '-'}</div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
 
               {isEditing ? (

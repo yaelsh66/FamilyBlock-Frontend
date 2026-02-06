@@ -134,6 +134,11 @@ function ChildHomePage() {
   return (
     <div className="child-home-page">
       <button className="child-home-button child-home-button-sm child-home-refresh-top" onClick={refreshScreenTime}>🔄 Refresh Time</button>
+      {isRunning && (
+        <div className="child-home-running-banner" role="status" aria-live="polite">
+          ⏱️ Screen time is running
+        </div>
+      )}
       <div className="child-home-container">
         <h2 className="child-home-title">Hi 👦 {user?.nickname}</h2>
 

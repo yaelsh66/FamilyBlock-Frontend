@@ -337,3 +337,147 @@
     width: 100%;
   }
 }
+
+/* Child time/schedule display (read-only) */
+.profile-time-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.profile-time-section .profile-time-label {
+  display: block;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.profile-time-section .profile-value {
+  padding: 1rem 1.25rem;
+  background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 8px;
+  border: 1px dashed #cbd5e0;
+  color: #718096;
+}
+
+.profile-time-subtitle {
+  color: #5a67d8;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.profile-daily-times {
+  padding: 1rem;
+  background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+}
+
+.profile-schedule-times {
+  padding: 1rem;
+  background: linear-gradient(180deg, #fff5f5 0%, #fed7d7 20%, #fef5f5 100%);
+  border-radius: 10px;
+  border: 1px solid #feb2b2;
+  box-shadow: 0 2px 8px rgba(197, 48, 48, 0.06);
+}
+
+.profile-schedule-times .profile-time-subtitle {
+  color: #c53030;
+  border-bottom-color: rgba(197, 48, 48, 0.25);
+}
+
+.profile-daily-times-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.profile-daily-times-days-row,
+.profile-daily-times-values-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.profile-daily-times-days-row .profile-daily-time-cell {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.profile-daily-time-cell {
+  padding: 0.5rem;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.profile-daily-time-value {
+  min-height: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  color: #2b6cb0;
+  font-weight: 500;
+  background: linear-gradient(180deg, #ebf8ff 0%, #e6fffa 100%);
+  border-color: #90cdf4;
+}
+
+.profile-schedule-time-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.profile-schedule-time-item {
+  padding: 0.85rem 1rem;
+  background: linear-gradient(180deg, #fff 0%, #fff5f5 100%);
+  border: 1px solid #feb2b2;
+  border-left: 4px solid #e53e3e;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #4a5568;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.profile-schedule-time-item div {
+  margin-bottom: 0.25rem;
+}
+
+.profile-schedule-time-item div:last-child {
+  margin-bottom: 0;
+}
+
+.profile-schedule-time-item strong {
+  color: #742a2a;
+}
+
+@media (max-width: 640px) {
+  .profile-daily-times-days-row,
+  .profile-daily-times-values-row {
+    gap: 0.35rem;
+  }
+
+  .profile-daily-time-cell {
+    font-size: 0.75rem;
+    padding: 0.35rem;
+  }
+}

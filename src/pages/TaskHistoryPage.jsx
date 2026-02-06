@@ -153,23 +153,27 @@ function TaskHistoryPage() {
             <table className="task-history-table">
               <thead>
                 <tr>
-                  <th>Date</th>
                   <th>Task</th>
                   <th>Status</th>
                   <th>Time (min)</th>
                   <th>Child comment</th>
                   <th>Parent comment</th>
+                  <th>Created</th>
+                  <th>Submitted</th>
+                  <th>Last updated</th>
                 </tr>
               </thead>
               <tbody>
                 {history.map((item) => (
                   <tr key={item.id || item.taskInstanceId}>
-                    <td>{formatDateTime(item.lastUpdateDate || item.lastUpdatedDate || item.updatedAt || item.createdAt)}</td>
                     <td>{item.title || item.taskTitle || '-'}</td>
-                    <td>{item.status || item.taskStatus || '-'}</td>
-                    <td>{item.time ?? item.screenTime ?? '-'}</td>
+                    <td>{item.status || item.Status || '-'}</td>
+                    <td>{item.minutesReward ?? item.screenTime ?? '-'}</td>
                     <td>{item.childComment || '-'}</td>
                     <td>{item.parentComment || '-'}</td>
+                    <td>{formatDateTime(item.createdAt || item.created_at)}</td>
+                    <td>{formatDateTime(item.submittedAt || item.submitted_at || item.completedAt || item.completed_at)}</td>
+                    <td>{formatDateTime(item.lastUpdateDate || item.lastUpdatedDate || item.updatedAt || item.updated_at)}</td>
                   </tr>
                 ))}
               </tbody>

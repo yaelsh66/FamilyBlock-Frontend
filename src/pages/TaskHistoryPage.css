@@ -64,6 +64,8 @@
 .task-history-table-wrapper {
   margin-top: 0.5rem;
   overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
 .task-history-empty {
@@ -76,40 +78,76 @@
   border-collapse: collapse;
   font-size: 0.9rem;
   background-color: #ffffff;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .task-history-table th,
 .task-history-table td {
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e8ecf1;
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
+}
+
+.task-history-table thead tr {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
 }
 
 .task-history-table th {
-  background-color: #f7fafc;
   font-weight: 600;
-  color: #4a5568;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   white-space: nowrap;
+  border: none;
 }
 
-.task-history-table tr:nth-child(even) td {
-  background-color: #fdfdfd;
+.task-history-table tbody tr {
+  transition: background-color 0.15s ease;
 }
 
-.task-history-table tr:last-child td {
+.task-history-table tbody tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+
+.task-history-table tbody tr:nth-child(odd) td {
+  background-color: #ffffff;
+}
+
+.task-history-table tbody tr:hover td {
+  background-color: #eff6ff !important;
+}
+
+.task-history-table tbody tr:last-child td {
   border-bottom: none;
 }
 
 .task-history-table td:nth-child(1) {
-  white-space: nowrap;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 .task-history-table td:nth-child(2) {
-  font-weight: 600;
+  font-weight: 500;
+}
+
+/* Status column – subtle status colors */
+.task-history-table td:nth-child(2):not(:empty) {
+  padding-left: 0.5rem;
+}
+
+/* Date columns (last 3) – muted for hierarchy */
+.task-history-table td:nth-child(n+6) {
+  font-size: 0.85rem;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.task-history-table th:nth-child(n+6) {
+  font-size: 0.8rem;
+  opacity: 0.95;
 }
 
 @media (max-width: 640px) {
