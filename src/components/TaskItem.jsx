@@ -105,7 +105,7 @@ export default function TaskItem({ task, isAssigned = false, onComplete, onStart
                 {task.title}
               </h5>
               <span className="task-badge">
-                ⏰ {task.time} min
+                ⏰ {(task.time ?? task.screenTime ?? task.minutesReward ?? 0)} min
               </span>
             </div>
 

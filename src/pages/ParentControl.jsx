@@ -20,22 +20,112 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
     ];
     
     const apps = [
-        { id: 1, name: "Microsoft Games", processName: ["Solitaire.exe", 
-            "Minesweeper.exe", "Mahjong.exe", "Sudoku.exe", "BubbleBreaker.exe",
-            "GameManagerService.exe", "Jigsaw.exe", "UltimateWordGames.exe"]},
-        { id: 2, name: "Slack", processName: "slack.exe" },
-        { id: 3, name: "Zoom", processName: "Zoom.exe" },
-        { id: 4, name: "Telegram Desktop", processName: "telegram.exe" },
-        { id: 5, name: "WhatsApp Desktop", processName: "WhatsApp.exe" },
-        { id: 6, name: "Minecraft", processName: ["MinecraftLauncher.exe", "javaw.exe", "Minecraft.Windows.exe"] },
-        { id: 7, name: "Xbox App", processName: "XboxApp.exe" },
-        { id: 8, name: "Spotify", processName: "Spotify.exe" },
-        { id: 9, name: "Netflix", processName: "Netflix.exe" },
-        { id: 10, name: "YouTube", processName: "YouTube Music.exe" },
-        { id: 11, name: "Roblox", processName: ["RobloxPlayerBeta.exe", "RobloxStudioBeta.exe", "RobloxPlayerLauncher.exe"] },
-        { id: 12, name: "TikTok", processName: "TikTok.exe" },
-        { id: 13, name: "Xbox Game Bar", processName: "GameBar.exe" },
-        { id: 14, name: "mikmak2", processName: "mikmak2.exe" },
+        {
+              id: 1,
+              name: "Windows Games",
+              processName: [
+                "MicrosoftSolitaireCollection.exe",
+                "MicrosoftMinesweeper.exe",
+                "MicrosoftMahjong.exe",
+                "MicrosoftSudoku.exe",
+                "Jigsaw.exe",
+                "GameBar.exe"
+              ]
+            },
+          
+            {
+              id: 2,
+              name: "Minecraft",
+              processName: [
+                "MinecraftLauncher.exe",
+                "Minecraft.Windows.exe",
+              ]
+            },
+          
+            {
+              id: 3,
+              name: "Game Launchers",
+              processName: [
+                "steam.exe",
+                "EpicGamesLauncher.exe",
+                "Battle.net.exe",
+                "RiotClientServices.exe",
+                "XboxApp.exe",
+                "GamingApp.exe"
+              ]
+            },
+          
+            {
+              id: 4,
+              name: "Social Media",
+              processName: [
+                "Discord.exe",
+                "Telegram.exe",
+                "WhatsApp.exe",
+                "Instagram.exe",
+                "Facebook.exe",
+                "Messenger.exe",
+                "Twitter.exe",
+                "TikTok.exe"
+              ]
+            },
+          
+            {
+              id: 5,
+              name: "Communication",
+              processName: [
+                "slack.exe",
+                "Zoom.exe"
+              ]
+            },
+          
+            {
+              id: 6,
+              name: "Video",
+              processName: [
+                "Netflix.exe",
+                "YouTube.exe",
+                "YouTube Music.exe"
+              ]
+            },
+          
+            {
+              id: 7,
+              name: "Music",
+              processName: [
+                "Spotify.exe"
+              ]
+            },
+          
+            {
+              id: 8,
+              name: "Roblox",
+              processName: [
+                "RobloxPlayerBeta.exe",
+                "RobloxStudioBeta.exe",
+              ]
+            },
+          
+            {
+              id: 9,
+              name: "Custom",
+              processName: [
+                "mikmak2.exe"
+              ]
+            },
+            {
+                id: 10,
+                name: "Browsers (Except Chrome)",
+                processName: [
+                  "firefox.exe",
+                  "opera.exe",
+                  "opera gx.exe",
+                  "opera.exe",
+                  "brave.exe",
+                  "vivaldi.exe",
+                  "tor.exe"
+                ]
+              }
     ];
 
     const browsers = [

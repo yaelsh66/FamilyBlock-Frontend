@@ -6,6 +6,7 @@ import {
   deleteDeviceApi
 } from '../api/deviceApi';
 import NewDeviceModal from '../components/NewDeviceModal';
+import DownloadModal from '../components/DownloadModal';
 import './Device.css';
 
 function Device() {
@@ -17,6 +18,7 @@ function Device() {
   const [devices, setDevices] = useState([]);
   const [saving, setSaving] = useState(false);
   const [showNewDeviceModal, setShowNewDeviceModal] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   const fetchData = async () => {
     if (!user || !childId) {
@@ -34,6 +36,17 @@ function Device() {
       setError('Failed to load device information');
     } finally {
       setLoading(false);
+    }
+  };
+
+  /** Refresh device list without showing full-page loading (e.g. after adding device in modal). */
+  const refreshDevicesSilent = async () => {
+    if (!user || !childId) return;
+    try {
+      const devicesData = await getDevicesApi(childId, user.token);
+      setDevices(devicesData);
+    } catch (err) {
+      console.error('Failed to refresh devices:', err);
     }
   };
 
@@ -89,6 +102,13 @@ function Device() {
                 onClick={handleOpenNewDeviceModal}
               >
                 ➕ New Device
+              </button>
+              <button
+                type="button"
+                className="device-btn device-btn-secondary"
+                onClick={() => setShowDownloadModal(true)}
+              >
+                📥 Download
               </button>
               <button
                 type="button"
@@ -150,7 +170,12 @@ function Device() {
         onHide={handleCloseNewDeviceModal}
         childId={childId}
         user={user}
-        onSuccess={fetchData}
+        onSuccess={refreshDevicesSilent}
+      />
+      <DownloadModal
+        show={showDownloadModal}
+        onHide={() => setShowDownloadModal(false)}
+        user={user}
       />
     </>
   );

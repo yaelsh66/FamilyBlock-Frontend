@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
 const weekDayNames = [
@@ -6,12 +6,20 @@ const weekDayNames = [
   'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'
 ];
 
-function WeekDayPicker({ onChange, onDone}) {
+function WeekDayPicker({ onChange, onDone, onCancel, initialSelectedDays, initialSelectedTime }) {
+  const [selectedDays, setSelectedDays] = useState(() =>
+    Array.isArray(initialSelectedDays) ? initialSelectedDays : []
+  );
+  const [selectedTime, setSelectedTime] = useState(() =>
+    initialSelectedTime ?? '09:00'
+  );
 
-  
-    const [selectedDays, setSelectedDays] = useState([]);
-    const [selectedTime, setSelectedTime] = useState('09:00')
-    const toggleDay = idx => {
+  useEffect(() => {
+    if (Array.isArray(initialSelectedDays)) setSelectedDays(initialSelectedDays);
+    if (initialSelectedTime != null) setSelectedTime(initialSelectedTime);
+  }, [initialSelectedDays, initialSelectedTime]);
+
+  const toggleDay = idx => {
         setSelectedDays(prev => {
         const next = prev.includes(idx)
             ? prev.filter(d => d !== idx)
@@ -45,7 +53,10 @@ function WeekDayPicker({ onChange, onDone}) {
                 />
             </Form.Group>
             </Form>
-            <div className='mt-2 d-flex justify-content-end'>
+            <div className='mt-2 d-flex justify-content-end gap-2'>
+                {onCancel && (
+                  <Button variant="outline-secondary" onClick={onCancel}>Cancel</Button>
+                )}
                 <Button onClick={() => onDone(selectedDays, selectedTime)}>Done</Button>
             </div>
         </div>

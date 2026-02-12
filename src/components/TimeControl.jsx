@@ -26,6 +26,7 @@ function TimeControl({ selectedChildId, children = [] }) {
     const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
     const weekend = ['FRIDAY', 'SATURDAY'];
     const [selectedChild, setSelectedChild] = useState(null);
+    const STEP_MINUTES = 5;
     
     
     useEffect(() => {
@@ -387,13 +388,35 @@ function TimeControl({ selectedChildId, children = [] }) {
                 </div>
                 <div className="time-input-container">
                     <label htmlFor="daily-time-input">Time (minutes): </label>
-                    <input
-                        id="daily-time-input"
-                        type="number"
-                        min="0"
-                        value={dailyTimeMinutes}
-                        onChange={(e) => setDailyTimeMinutes(parseInt(e.target.value) || 0)}
-                    />
+                    <div className="time-control-minutes-row">
+                        <button
+                            type="button"
+                            className="btn time-control-step-btn"
+                            onClick={() => setDailyTimeMinutes((m) => Math.max(0, m - STEP_MINUTES))}
+                            aria-label="Decrease by 5 minutes"
+                        >
+                            −
+                        </button>
+                        <input
+                            id="daily-time-input"
+                            type="number"
+                            min="0"
+                            step={STEP_MINUTES}
+                            value={dailyTimeMinutes}
+                            onChange={(e) => {
+                                const v = parseInt(e.target.value, 10);
+                                if (!Number.isNaN(v) && v >= 0) setDailyTimeMinutes(v);
+                            }}
+                        />
+                        <button
+                            type="button"
+                            className="btn time-control-step-btn"
+                            onClick={() => setDailyTimeMinutes((m) => m + STEP_MINUTES)}
+                            aria-label="Increase by 5 minutes"
+                        >
+                            +
+                        </button>
+                    </div>
                 </div>
                 <button
                     type="button"

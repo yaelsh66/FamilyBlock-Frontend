@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addNewDeviceApi, downloadAgentApi, downloadAgentUIApi } from '../api/deviceApi';
+import { addNewDeviceApi, downloadAgentApi, downloadAgentUIApi, downloadAgentInstallerApi } from '../api/deviceApi';
 import './NewDeviceModal.css';
 
 function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
@@ -11,6 +11,7 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
   const [step1Complete, setStep1Complete] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadingUI, setDownloadingUI] = useState(false);
+  const [downloadingInstaller, setDownloadingInstaller] = useState(false);
 
   const handleClose = () => {
     setName('');
@@ -20,6 +21,7 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
     setStep1Complete(false);
     setDownloading(false);
     setDownloadingUI(false);
+    setDownloadingInstaller(false);
     onHide();
   };
 
@@ -68,7 +70,22 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
     }
   };
 
+  const handleDownloadInstaller = async (e) => {
+    e?.preventDefault();
+    setDownloadingInstaller(true);
+    setError('');
+    try {
+      await downloadAgentInstallerApi(user.token);
+      setDownloadingInstaller(false);
+    } catch (err) {
+      console.error('Failed to download agent installer:', err);
+      setError('Failed to download agent installer. Please try again.');
+      setDownloadingInstaller(false);
+    }
+  };
+
   const step2Enabled = step1Complete;
+  const anyDownloading = downloading || downloadingUI || downloadingInstaller;
 
   if (!show) {
     return null;
@@ -176,7 +193,7 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
                 type="button"
                 className="ndm-btn ndm-btn-secondary"
                 onClick={handleClose}
-                disabled={submitting || downloading || downloadingUI}
+                disabled={submitting || anyDownloading}
               >
                 Cancel
               </button>
@@ -206,7 +223,7 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
                     type="button"
                     className="ndm-btn ndm-btn-outline-primary"
                     onClick={handleDownload}
-                    disabled={downloading || downloadingUI}
+                    disabled={anyDownloading}
                   >
                     {downloading ? 'Downloading...' : '📥 Download Agent'}
                   </button>
@@ -214,9 +231,17 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
                     type="button"
                     className="ndm-btn ndm-btn-outline-secondary"
                     onClick={handleDownloadUI}
-                    disabled={downloading || downloadingUI}
+                    disabled={anyDownloading}
                   >
                     {downloadingUI ? 'Downloading...' : '📥 Download Agent (UI)'}
+                  </button>
+                  <button
+                    type="button"
+                    className="ndm-btn ndm-btn-outline-secondary"
+                    onClick={handleDownloadInstaller}
+                    disabled={anyDownloading}
+                  >
+                    {downloadingInstaller ? 'Downloading...' : '📥 Download Installer'}
                   </button>
                 </div>
                 <p className="ndm-instructions-label">Install instructions:</p>
@@ -242,7 +267,7 @@ function NewDeviceModal({ show, onHide, childId, user, onSuccess }) {
                 type="button"
                 className="ndm-btn ndm-btn-primary ndm-btn-full"
                 onClick={handleClose}
-                disabled={downloading || downloadingUI}
+                disabled={anyDownloading}
               >
                 Done
               </button>

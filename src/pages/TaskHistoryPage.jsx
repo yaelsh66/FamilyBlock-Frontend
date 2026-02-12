@@ -160,7 +160,7 @@ function TaskHistoryPage() {
                   <th>Parent comment</th>
                   <th>Created</th>
                   <th>Submitted</th>
-                  <th>Last updated</th>
+                  <th>approved At</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,7 +173,7 @@ function TaskHistoryPage() {
                     <td>{item.parentComment || '-'}</td>
                     <td>{formatDateTime(item.createdAt || item.created_at)}</td>
                     <td>{formatDateTime(item.submittedAt || item.submitted_at || item.completedAt || item.completed_at)}</td>
-                    <td>{formatDateTime(item.lastUpdateDate || item.lastUpdatedDate || item.updatedAt || item.updated_at)}</td>
+                    <td>{formatDateTime(item.approvedAt || item.lastUpdatedDate || item.updatedAt || item.updated_at)}</td>
                   </tr>
                 ))}
               </tbody>

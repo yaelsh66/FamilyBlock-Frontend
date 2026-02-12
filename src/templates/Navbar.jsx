@@ -107,6 +107,7 @@ function ColorSchemesExample() {
                   </>
                 )}
                 <Link to={user.role === 'PARENT' ? '/parent/history' : '/child/history'} className="nav-link" onClick={() => setIsMenuOpen(false)}>Task History</Link>
+                <Link to="/week" className="nav-link" onClick={() => setIsMenuOpen(false)}>Weekly Table</Link>
                 <Link to="/profile" className="nav-link" onClick={() => setIsMenuOpen(false)}>Profile</Link>
               </>
             )}

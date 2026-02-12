@@ -229,3 +229,13 @@ export const downloadAgentUIApi = async (idToken) => {
         throw error;
     }
 };
+
+/** Download agent installer. */
+export const downloadAgentInstallerApi = async (idToken) => {
+    try {
+        await downloadZipFromPath('/download_agentInstaller', 'FamilyBlockInstaller.zip', idToken);
+    } catch (error) {
+        console.error('Failed to download agent installer:', error);
+        throw error;
+    }
+};

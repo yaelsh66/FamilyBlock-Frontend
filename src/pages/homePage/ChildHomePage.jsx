@@ -1,5 +1,5 @@
 // src/pages/ChildHomePage.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import AmountBox from '../../components/AmountBox';
@@ -7,6 +7,7 @@ import { useScreenTime } from '../../context/ScreenTimeContext';
 import { useTaskContext } from '../../context/TaskContext';
 import TaskItem from '../../components/TaskItem';
 import { submitCompletion } from '../../api/firebaseTasks';
+import { completeWeeklyTask } from '../../api/weeklyApi';
 import { getIsRunningApi } from '../../api/deviceApi';
 import './ChildHomePage.css';
 
@@ -15,8 +16,17 @@ function ChildHomePage() {
   const navigate = useNavigate();
   const { totalScreenTime, pendingScreenTime, withdrawScreenTime, withdrawScreenTimeStop,
     refreshScreenTime, addToPendingScreenTime } = useScreenTime();
-  const { assignedTasks, refreshTasks } = useTaskContext();
+  const { assignedTasks, weeklyAssignments, refreshTasks } = useTaskContext();
   const [showCommentModal, setShowCommentModal] = useState(false);
+
+  // Today's incomplete weekly tasks (assigned for today, wasCompleteToday = false)
+  const todayWeeklyTasks = useMemo(() => {
+    const todayIndex = new Date().getDay();
+    const todaySlots = weeklyAssignments?.[todayIndex] || {};
+    return Object.values(todaySlots)
+      .flat()
+      .filter((t) => t.wasCompleteToday === false) ?? [];
+  }, [weeklyAssignments]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [comment, setComment] = useState('');
   const [isRunning, setIsRunning] = useState(false);
@@ -103,21 +113,26 @@ function ChildHomePage() {
 
   const handleCommentSubmit = async () => {
     if (!selectedTask) return;
-    
+    const isWeekly = selectedTask.isWeekly === true;
+
     try {
-      // Call backend to submit completion with comment
-      await submitCompletion(selectedTask.id, comment, user.token);
+      if (isWeekly) {
+        await completeWeeklyTask(selectedTask.id, user.token, undefined, comment);
+      } else {
+        await submitCompletion(selectedTask.id, comment, user.token);
+      }
 
-      // Update pending screen time
-      await addToPendingScreenTime(selectedTask.time);
+      const minutesReward = selectedTask.time ?? selectedTask.minutesReward ?? 0;
+      if (minutesReward > 0) {
+        await addToPendingScreenTime(minutesReward);
+      }
 
-      // Refresh the task list to remove the completed task
       await refreshTasks();
 
       setShowCommentModal(false);
       setSelectedTask(null);
       setComment('');
-      alert(`✅ Task "${selectedTask.title}" marked as completed! Waiting for approval.`);
+      alert(`✅ Task "${selectedTask.title}" marked as completed!${!isWeekly ? ' Waiting for approval.' : ''}`);
     } catch (error) {
       console.error('Failed to mark task as completed:', error);
       alert('❌ Failed to complete task. Try again later.');
@@ -180,17 +195,37 @@ function ChildHomePage() {
             <h3 className="child-home-tasks-title">To Do List</h3>
             
             <div className="child-home-tasks-list">
-              {assignedTasks.length === 0 ? (
+              {assignedTasks.length === 0 && todayWeeklyTasks.length === 0 ? (
                 <p className="child-home-no-tasks">No assigned tasks yet.</p>
               ) : (
-                assignedTasks.map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    isAssigned={true}
-                    onComplete={handleComplete}
-                  />
-                ))
+                <>
+                  {assignedTasks.length > 0 && (
+                    <div className="child-home-tasks-section">
+                      <h4 className="child-home-tasks-section-title">Assigned tasks</h4>
+                      {assignedTasks.map((task) => (
+                        <TaskItem
+                          key={`assigned-${task.id}`}
+                          task={task}
+                          isAssigned={true}
+                          onComplete={(t) => handleComplete({ ...t, isWeekly: false })}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {todayWeeklyTasks.length > 0 && (
+                    <div className="child-home-tasks-section">
+                      <h4 className="child-home-tasks-section-title">Today&apos;s schedule</h4>
+                      {todayWeeklyTasks.map((task) => (
+                        <TaskItem
+                          key={`weekly-${task.id}`}
+                          task={{ ...task, time: task.time ?? task.minutesReward ?? 0 }}
+                          isAssigned={true}
+                          onComplete={(t) => handleComplete({ ...t, isWeekly: true })}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

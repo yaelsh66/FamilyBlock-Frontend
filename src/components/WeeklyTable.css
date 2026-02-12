@@ -1,0 +1,189 @@
+/* Weekly Table page */
+
+.weekly-table-page {
+  padding: 1.5rem 0 2rem;
+  max-width: 100%;
+}
+
+.weekly-table-page .page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* Side-by-side layout: table left, tasks right */
+.weekly-layout-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .weekly-layout-row {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+
+/* Table wrapper - compact, allow horizontal scroll on small screens */
+.weekly-table-wrapper {
+  overflow-x: auto;
+  flex: 0 1 auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dee2e6;
+  background: #fff;
+}
+
+/* Schedule table - compact size */
+.weekly-schedule-table {
+  margin-bottom: 0;
+  table-layout: fixed;
+  width: auto;
+  min-width: 420px;
+  font-size: 0.85rem;
+}
+
+.weekly-schedule-table thead th {
+  font-weight: 600;
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+  border-color: #dee2e6;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.weekly-table-time-col {
+  width: 3.5rem;
+  min-width: 3.5rem;
+  background: #e8eef5 !important;
+  font-weight: 600;
+  vertical-align: middle;
+  color: #1a1a2e;
+}
+
+.weekly-table-day-col {
+  width: 4.5rem;
+  min-width: 4.5rem;
+  vertical-align: top;
+}
+
+.weekly-table-cell {
+  padding: 0.35rem !important;
+  border-color: #dee2e6;
+  min-height: 2.5rem;
+}
+
+.weekly-table-cell-task {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.8rem;
+}
+
+.weekly-table-cell-task:last-child {
+  border-bottom: none;
+}
+
+.weekly-table-cell-task .btn {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+}
+
+/* Update panel (when editing a weekly task) */
+.weekly-table-update-panel {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.weekly-table-update-panel .update-panel-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.75rem;
+}
+
+/* Tasks section - sidebar next to table */
+.weekly-table-tasks-section {
+  flex: 0 0 280px;
+  min-width: 260px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 1rem;
+}
+
+.weekly-table-tasks-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.weekly-table-tasks-list-horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.weekly-table-task-card {
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0 !important;
+  padding: 0.85rem !important;
+  background: #fff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.weekly-table-task-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.weekly-table-page .form-label {
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.weekly-table-page .form-select {
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+  max-width: 20rem;
+}
+
+/* Child color legend (when multiple children in schedule) */
+.weekly-child-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.weekly-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: #495057;
+}
+
+.weekly-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

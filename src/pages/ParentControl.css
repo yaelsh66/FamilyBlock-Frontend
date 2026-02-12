@@ -495,6 +495,25 @@
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+.time-control-minutes-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.time-control-minutes-row input {
+    width: 70px;
+    text-align: center;
+}
+
+.time-control-step-btn {
+    min-width: 36px;
+    padding: 6px 10px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
 .save-time-button {
     width: 100%;
     padding: 10px;

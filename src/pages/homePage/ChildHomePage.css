@@ -254,6 +254,23 @@
   background: #555;
 }
 
+.child-home-tasks-section {
+  margin-bottom: 1rem;
+}
+
+.child-home-tasks-section:last-child {
+  margin-bottom: 0;
+}
+
+.child-home-tasks-section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #495057;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
 .child-home-no-tasks {
   text-align: center;
   color: #6c757d;
