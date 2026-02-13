@@ -431,6 +431,14 @@ return(
                     className="modal-card"
                     onClick={(e) => e.stopPropagation()}
                 >
+                    <button
+                        type="button"
+                        className="modal-close-btn"
+                        onClick={() => setActiveSection(null)}
+                        aria-label="Close"
+                    >
+                        ×
+                    </button>
                     <div className="modal-card-body">
                         {activeSection === 'apps' && renderAppsContent()}
                         {activeSection === 'sites' && renderSitesContent()}

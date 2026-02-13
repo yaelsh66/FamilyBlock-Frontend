@@ -51,6 +51,7 @@
 }
 
 .modal-card {
+    position: relative;
     width: 80%;
     max-width: 600px;
     max-height: 80vh;
@@ -58,10 +59,39 @@
     border: 2px solid #007bff;
     background-color: #ffffff;
     margin: 16px;
+    border-radius: 12px;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 1.75rem;
+    line-height: 1;
+    font-weight: 300;
+    color: #4a5568;
+    background: #edf2f7;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.modal-close-btn:hover {
+    background: #e2e8f0;
+    color: #1a202c;
 }
 
 .modal-card-body {
     padding: 2rem;
+    padding-top: 2.5rem;
 }
 
 /* Apps/Sites modal: scrollable list + sticky save section */
@@ -741,15 +771,43 @@
     width: 100%;
 }
 
+/* Phone/small screens: constrain modal size and keep overlay tappable */
+@media (max-width: 767px) {
+    .modal-overlay {
+        padding: 12px;
+        align-items: flex-start;
+        padding-top: max(12px, env(safe-area-inset-top));
+    }
+
+    .modal-card {
+        width: calc(100% - 24px);
+        max-width: none;
+        max-height: 85vh;
+        margin: 0;
+        border-radius: 12px;
+    }
+
+    .modal-card-body {
+        padding: 1.25rem;
+        padding-top: 2.25rem;
+    }
+
+    .modal-close-btn {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+}
+
 @media (max-width: 640px) {
     .parent-control-container {
         padding: 0 12px 24px;
     }
 
     .modal-card {
-        width: 92%;
-        max-width: 480px;
-        max-height: 88vh;
+        max-height: 82vh;
     }
 
     .modal-card-body {
