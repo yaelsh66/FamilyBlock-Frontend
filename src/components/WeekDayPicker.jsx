@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import './WeekDayPicker.css';
 
 const weekDayNames = [
   'SUNDAY', 'MONDAY', 'TUESDAY',
@@ -30,34 +30,35 @@ function WeekDayPicker({ onChange, onDone, onCancel, initialSelectedDays, initia
     };
 
     return (
-        <div className='p-2 border rounded bg-light'>
-            <Form className="p-2 border rounded bg-light">
+        <div className="weekday-picker panel">
+            <div className="weekday-picker-form">
             {weekDayNames.map((name, idx) => (
-                <Form.Check
-                key={idx}
-                type="checkbox"
-                id={`weekday-${idx}`}
-                label={name}
-                checked={selectedDays.includes(idx)}
-                onChange={() => toggleDay(idx)}
-                className="mb-1"
+                <label key={idx} className="form-check">
+                <input
+                    type="checkbox"
+                    id={`weekday-${idx}`}
+                    checked={selectedDays.includes(idx)}
+                    onChange={() => toggleDay(idx)}
                 />
+                {name}
+                </label>
             ))}     
-            {/* —— Time picker —— */}
-            <Form.Group controlId="timeInput" className="mt-3">
-                <Form.Label>Pick a time</Form.Label>
-                <Form.Control
+            <div className="form-group mt-3">
+                <label className="form-label" htmlFor="timeInput">Pick a time</label>
+                <input
+                    id="timeInput"
                     type="time"
+                    className="form-control"
                     value={selectedTime}
                     onChange={e => setSelectedTime(e.target.value)}
                 />
-            </Form.Group>
-            </Form>
-            <div className='mt-2 d-flex justify-content-end gap-2'>
+            </div>
+            </div>
+            <div className="mt-2 d-flex justify-content-end gap-2">
                 {onCancel && (
-                  <Button variant="outline-secondary" onClick={onCancel}>Cancel</Button>
+                  <button type="button" className="btn btn-outline-secondary" onClick={onCancel}>Cancel</button>
                 )}
-                <Button onClick={() => onDone(selectedDays, selectedTime)}>Done</Button>
+                <button type="button" className="btn btn-primary" onClick={() => onDone(selectedDays, selectedTime)}>Done</button>
             </div>
         </div>
     );

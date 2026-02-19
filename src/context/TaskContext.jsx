@@ -242,16 +242,13 @@ export const TaskProvider = ({ children }) => {
   const unassignWeekly = async (task, day, timeSlot, childId) => {
     const taskId = task?.id;
     if (taskId == null) return;
-    dispatch({ type: 'UNASSIGN_WEEKLY', payload: { taskId, day, timeSlot } });
+    dispatch({ type: 'CLEAR_WEEKLY_FOR_TASK', payload: { taskId } });
     if (childId == null) return;
-    const dayName = WEEK_DAY_NAMES[day];
-    const currentDays = Array.isArray(task?.days) ? task.days : [];
-    const newDays = currentDays.filter((d) => d !== dayName);
-    const toDoAt = task?.localTime ?? task?.toDoAt ?? timeSlot;
     try {
-      await weeklyApi.updateWeeklyTask(taskId, { days: newDays, toDoAt }, user.token, childId);
+      await weeklyApi.clearTaskWeeklySchedule(taskId, user.token, childId ?? undefined);
+      await fetchTasks(childId);
     } catch (err) {
-      console.error('Failed to persist weekly update:', err);
+      console.error('Failed to persist weekly unassign:', err);
       fetchTasks(childId);
     }
   };

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './ParentControl.css';
-import { updateChildAppsApi, updateChildSitesApi, getChildAppsApi, getChildSitesApi } from '../api/deviceApi';
+import { updateChildAppsApi, updateChildSitesApi, getChildAppsApi, getChildSitesApi, getChildPermanentSitesApi, updateChildPermanentSitesApi } from '../api/deviceApi';
 import TimeControl from '../components/TimeControl';
 function ParentControl({ selectedChildId, children = [], initialSection = null }) {
 
@@ -12,7 +12,9 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
             "lagged.com", "mathplayground.com", "iogames.space", "iogames.fun", 
             "solitaired.com", "247solitaire.com", "worldofsolitaire.com", 
             "cardgames.io", "arkadium.com", "freegames.org", "addictinggames.com", 
-            "crazygames.com", "poki.com", "yo-yoo.co.il"] },
+            "crazygames.com", "poki.com", "yo-yoo.co.il",
+             "www.yo-yoo.co.il/games/gameshttp/nahashim.htm", "id.blooket.com", 
+             "dashboard.blooket.com"] },
         { id: 3, name: "YouTube", url: ["youtube.com", "youtubekids.com"] },
         { id: 4, name: "Netflix", url: "netflix.com" },
         { id: 5, name: "TikTok", url: "tiktok.com" },
@@ -115,7 +117,7 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
             },
             {
                 id: 10,
-                name: "Browsers (Except Chrome)",
+                name: "Browsers (Site Block applies to Chrome and Edge)",
                 processName: [
                   "firefox.exe",
                   "opera.exe",
@@ -141,8 +143,27 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
     const { user, loading } = useAuth();
     const [selectedAppIds, setSelectedAppIds] = useState([]);
     const [selectedSiteIds, setSelectedSiteIds] = useState([]);
+    const [selectedPermanentSiteIds, setSelectedPermanentSiteIds] = useState([]);
+    const [selectedAppPartial, setSelectedAppPartial] = useState({});
+    const [selectedSitePartial, setSelectedSitePartial] = useState({});
+    const [selectedPermanentSitePartial, setSelectedPermanentSitePartial] = useState({});
+    const [expandedAppIds, setExpandedAppIds] = useState([]);
+    const [expandedSiteIds, setExpandedSiteIds] = useState([]);
+    const [expandedPermanentSiteIds, setExpandedPermanentSiteIds] = useState([]);
+    const appCategoryCheckboxRefs = useRef({});
+    const siteCategoryCheckboxRefs = useRef({});
+    const permanentSiteCategoryCheckboxRefs = useRef({});
     const [activeSection, setActiveSection] = useState(initialSection);
     const [selectedChild, setSelectedChild] = useState(null);
+
+    const getAppProcessNames = (app) => {
+        const p = app.processName;
+        return Array.isArray(p) ? p.map((n) => String(n).toLowerCase()) : (p != null && p !== '' ? [String(p).toLowerCase()] : []);
+    };
+    const getSiteUrls = (site) => {
+        const u = site.url;
+        return Array.isArray(u) ? u.map((url) => String(url).toLowerCase()) : (u != null && u !== '' ? [String(u).toLowerCase()] : []);
+    };
     
     
     useEffect(() => {
@@ -171,46 +192,116 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
             return;
         }
         const fetchChildApps = async () => {
-            try{
-                const apps = await getChildAppsApi(selectedChildId, user.token);
+            try {
+                const appsRes = await getChildAppsApi(selectedChildId, user.token);
                 setSelectedAppIds([]);
-                if (!apps) return;
-                const rawList = apps.appList;
+                setSelectedAppPartial({});
+                if (!appsRes) return;
+                const rawList = appsRes.appList;
                 const appsArray = Array.isArray(rawList) ? rawList : (typeof rawList === 'string' ? JSON.parse(rawList) : []);
-                const appIds = appsArray
-                    .map((item) => findAppIdByProcessName(typeof item === 'string' ? item : item?.processName ?? item))
-                    .filter(Boolean);
-                setSelectedAppIds(appIds);
-            }catch(error){
+                const allowedSet = new Set(
+                    appsArray.map((item) => String((typeof item === 'string' ? item : item?.processName ?? item) ?? '').toLowerCase()).filter(Boolean)
+                );
+                const fullIds = [];
+                const partial = {};
+                apps.forEach((app) => {
+                    const names = getAppProcessNames(app);
+                    const inList = names.filter((n) => allowedSet.has(n));
+                    if (inList.length === 0) return;
+                    if (inList.length === names.length) fullIds.push(app.id);
+                    else partial[app.id] = inList;
+                });
+                setSelectedAppIds(fullIds);
+                setSelectedAppPartial(partial);
+            } catch (error) {
                 console.error('Failed to get apps for child:', error);
             }
-        }
+        };
         const fetchChildSites = async () => {
-            try{
-                const sites = await getChildSitesApi(selectedChildId, user.token);
+            try {
+                const sitesRes = await getChildSitesApi(selectedChildId, user.token);
                 setSelectedSiteIds([]);
-                if (!sites) return;
-                const rawList = sites.siteList;
+                setSelectedSitePartial({});
+                if (!sitesRes) return;
+                const rawList = sitesRes.siteList;
                 const sitesArray = Array.isArray(rawList) ? rawList : (typeof rawList === 'string' ? JSON.parse(rawList || '[]') : []);
-                const siteIds = sitesArray
-                    .map((item) => findSiteIdByName(typeof item === 'string' ? item : item?.url ?? item))
-                    .filter(Boolean);
-                setSelectedSiteIds(siteIds);
-            }catch(error){
+                const allowedSet = new Set(
+                    sitesArray.map((item) => String((typeof item === 'string' ? item : item?.url ?? item) ?? '').toLowerCase()).filter(Boolean)
+                );
+                const fullIds = [];
+                const partial = {};
+                sites.forEach((site) => {
+                    const urls = getSiteUrls(site);
+                    const inList = urls.filter((u) => allowedSet.has(u));
+                    if (inList.length === 0) return;
+                    if (inList.length === urls.length) fullIds.push(site.id);
+                    else partial[site.id] = inList;
+                });
+                setSelectedSiteIds(fullIds);
+                setSelectedSitePartial(partial);
+            } catch (error) {
                 console.error('Failed to get sites for child:', error);
             }
-        }
+        };
+        const fetchChildPermanentSites = async () => {
+            try {
+                const res = await getChildPermanentSitesApi(selectedChildId, user.token);
+                setSelectedPermanentSiteIds([]);
+                setSelectedPermanentSitePartial({});
+                if (!res) return;
+                const rawList = res.siteList;
+                const sitesArray = Array.isArray(rawList) ? rawList : (typeof rawList === 'string' ? JSON.parse(rawList || '[]') : []);
+                const allowedSet = new Set(
+                    sitesArray.map((item) => String((typeof item === 'string' ? item : item?.url ?? item) ?? '').toLowerCase()).filter(Boolean)
+                );
+                const fullIds = [];
+                const partial = {};
+                sites.forEach((site) => {
+                    const urls = getSiteUrls(site);
+                    const inList = urls.filter((u) => allowedSet.has(u));
+                    if (inList.length === 0) return;
+                    if (inList.length === urls.length) fullIds.push(site.id);
+                    else partial[site.id] = inList;
+                });
+                setSelectedPermanentSiteIds(fullIds);
+                setSelectedPermanentSitePartial(partial);
+            } catch (error) {
+                console.error('Failed to get permanent sites for child:', error);
+            }
+        };
 
         fetchChildApps();
         fetchChildSites();
+        fetchChildPermanentSites();
     }, [selectedChildId, user]);
 
     // Handle initialSection prop changes
     useEffect(() => {
-        if (initialSection && (initialSection === 'apps' || initialSection === 'sites')) {
+        if (initialSection && (initialSection === 'apps' || initialSection === 'sites' || initialSection === 'permanentSites')) {
             setActiveSection(initialSection);
         }
     }, [initialSection]);
+
+    useEffect(() => {
+        Object.keys(appCategoryCheckboxRefs.current).forEach((id) => {
+            const el = appCategoryCheckboxRefs.current[id];
+            if (el) el.indeterminate = isAppCategoryIndeterminate(Number(id));
+        });
+    }, [selectedAppIds, selectedAppPartial]);
+
+    useEffect(() => {
+        Object.keys(siteCategoryCheckboxRefs.current).forEach((id) => {
+            const el = siteCategoryCheckboxRefs.current[id];
+            if (el) el.indeterminate = isSiteCategoryIndeterminate(Number(id));
+        });
+    }, [selectedSiteIds, selectedSitePartial]);
+
+    useEffect(() => {
+        Object.keys(permanentSiteCategoryCheckboxRefs.current).forEach((id) => {
+            const el = permanentSiteCategoryCheckboxRefs.current[id];
+            if (el) el.indeterminate = isPermanentSiteCategoryIndeterminate(Number(id));
+        });
+    }, [selectedPermanentSiteIds, selectedPermanentSitePartial]);
 
     const findSiteIdByName = (siteName) => {
         const search = String(siteName ?? '').toLowerCase();
@@ -235,20 +326,164 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
         })?.id;
     };
 
-    const toggleApp = (id) => {
-        setSelectedAppIds((prev) =>
-          prev.includes(id)
-            ? prev.filter((appId) => appId !== id)
-            : [...prev, id]
-        );
-      };
-      
-    const toggleSite = (id) => {
-        setSelectedSiteIds((prev) =>
-        prev.includes(id)
-        ? prev.filter((siteId) => siteId !== id)
-        : [...prev, id]
-        );
+    const isAppCategoryFull = (id) => selectedAppIds.includes(id);
+    const getAppCategoryPartial = (id) => selectedAppPartial[id] || [];
+    const isAppCategoryIndeterminate = (id) => {
+        if (selectedAppIds.includes(id)) return false;
+        const partial = selectedAppPartial[id];
+        return partial && partial.length > 0;
+    };
+    const toggleAppCategory = (id) => {
+        const app = apps.find((a) => a.id === id);
+        if (!app) return;
+        const names = getAppProcessNames(app);
+        if (selectedAppIds.includes(id)) {
+            setSelectedAppIds((prev) => prev.filter((appId) => appId !== id));
+            setSelectedAppPartial((prev) => ({ ...prev, [id]: [] }));
+        } else {
+            setSelectedAppIds((prev) => [...prev, id]);
+            setSelectedAppPartial((prev) => {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+            });
+        }
+    };
+    const toggleAppItem = (categoryId, processName) => {
+        const key = String(processName).toLowerCase();
+        const app = apps.find((a) => a.id === categoryId);
+        if (!app) return;
+        const allNames = getAppProcessNames(app);
+        setSelectedAppIds((prev) => prev.filter((id) => id !== categoryId));
+        setSelectedAppPartial((prev) => {
+            const current = prev[categoryId] || [];
+            const has = current.includes(key);
+            const next = has ? current.filter((n) => n !== key) : [...current, key];
+            if (next.length === 0) {
+                const { [categoryId]: _, ...rest } = prev;
+                return rest;
+            }
+            if (next.length === allNames.length) {
+                setSelectedAppIds((p) => [...p, categoryId]);
+                const { [categoryId]: __, ...rest } = { ...prev };
+                return rest;
+            }
+            return { ...prev, [categoryId]: next };
+        });
+    };
+    const isAppItemSelected = (categoryId, processName) => {
+        if (selectedAppIds.includes(categoryId)) return true;
+        const partial = selectedAppPartial[categoryId] || [];
+        return partial.includes(String(processName).toLowerCase());
+    };
+    const toggleExpandApp = (id) => {
+        setExpandedAppIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    };
+
+    const isSiteCategoryFull = (id) => selectedSiteIds.includes(id);
+    const getSiteCategoryPartial = (id) => selectedSitePartial[id] || [];
+    const isSiteCategoryIndeterminate = (id) => {
+        if (selectedSiteIds.includes(id)) return false;
+        const partial = selectedSitePartial[id];
+        return partial && partial.length > 0;
+    };
+    const toggleSiteCategory = (id) => {
+        const site = sites.find((s) => s.id === id);
+        if (!site) return;
+        if (selectedSiteIds.includes(id)) {
+            setSelectedSiteIds((prev) => prev.filter((siteId) => siteId !== id));
+            setSelectedSitePartial((prev) => ({ ...prev, [id]: [] }));
+        } else {
+            setSelectedSiteIds((prev) => [...prev, id]);
+            setSelectedSitePartial((prev) => {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+            });
+        }
+    };
+    const toggleSiteItem = (categoryId, url) => {
+        const key = String(url).toLowerCase();
+        const site = sites.find((s) => s.id === categoryId);
+        if (!site) return;
+        const allUrls = getSiteUrls(site);
+        setSelectedSiteIds((prev) => prev.filter((id) => id !== categoryId));
+        setSelectedSitePartial((prev) => {
+            const current = prev[categoryId] || [];
+            const has = current.includes(key);
+            const next = has ? current.filter((u) => u !== key) : [...current, key];
+            if (next.length === 0) {
+                const { [categoryId]: _, ...rest } = prev;
+                return rest;
+            }
+            if (next.length === allUrls.length) {
+                setSelectedSiteIds((p) => [...p, categoryId]);
+                const { [categoryId]: __, ...rest } = { ...prev };
+                return rest;
+            }
+            return { ...prev, [categoryId]: next };
+        });
+    };
+    const isSiteItemSelected = (categoryId, url) => {
+        if (selectedSiteIds.includes(categoryId)) return true;
+        const partial = selectedSitePartial[categoryId] || [];
+        return partial.includes(String(url).toLowerCase());
+    };
+    const toggleExpandSite = (id) => {
+        setExpandedSiteIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    };
+
+    const isPermanentSiteCategoryFull = (id) => selectedPermanentSiteIds.includes(id);
+    const getPermanentSiteCategoryPartial = (id) => selectedPermanentSitePartial[id] || [];
+    const isPermanentSiteCategoryIndeterminate = (id) => {
+        if (selectedPermanentSiteIds.includes(id)) return false;
+        const partial = selectedPermanentSitePartial[id];
+        return partial && partial.length > 0;
+    };
+    const togglePermanentSiteCategory = (id) => {
+        const site = sites.find((s) => s.id === id);
+        if (!site) return;
+        if (selectedPermanentSiteIds.includes(id)) {
+            setSelectedPermanentSiteIds((prev) => prev.filter((siteId) => siteId !== id));
+            setSelectedPermanentSitePartial((prev) => ({ ...prev, [id]: [] }));
+        } else {
+            setSelectedPermanentSiteIds((prev) => [...prev, id]);
+            setSelectedPermanentSitePartial((prev) => {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+            });
+        }
+    };
+    const togglePermanentSiteItem = (categoryId, url) => {
+        const key = String(url).toLowerCase();
+        const site = sites.find((s) => s.id === categoryId);
+        if (!site) return;
+        const allUrls = getSiteUrls(site);
+        setSelectedPermanentSiteIds((prev) => prev.filter((id) => id !== categoryId));
+        setSelectedPermanentSitePartial((prev) => {
+            const current = prev[categoryId] || [];
+            const has = current.includes(key);
+            const next = has ? current.filter((u) => u !== key) : [...current, key];
+            if (next.length === 0) {
+                const { [categoryId]: _, ...rest } = prev;
+                return rest;
+            }
+            if (next.length === allUrls.length) {
+                setSelectedPermanentSiteIds((p) => [...p, categoryId]);
+                const { [categoryId]: __, ...rest } = { ...prev };
+                return rest;
+            }
+            return { ...prev, [categoryId]: next };
+        });
+    };
+    const isPermanentSiteItemSelected = (categoryId, url) => {
+        if (selectedPermanentSiteIds.includes(categoryId)) return true;
+        const partial = selectedPermanentSitePartial[categoryId] || [];
+        return partial.includes(String(url).toLowerCase());
+    };
+    const toggleExpandPermanentSite = (id) => {
+        setExpandedPermanentSiteIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
     };
 
     const handleCardClick = (section) => {
@@ -265,16 +500,63 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
         <div className="apps-sites-modal-layout">
             <div className="apps-sites-checklist">
                 <h3>Choose Apps:</h3>
-                {[...apps].sort((a, b) => a.name.localeCompare(b.name)).map((app) => (
-                    <label key={app.id} className="apps-sites-item">
-                        <input
-                            type="checkbox"
-                            checked={selectedAppIds.includes(app.id)}
-                            onChange={() => toggleApp(app.id)}
-                        />
-                        <span className="apps-sites-item-label">{app.name}</span>
-                    </label>
-                ))}
+                <p className="apps-sites-hint">Select a whole category or expand to choose specific items.</p>
+                {[...apps].sort((a, b) => a.name.localeCompare(b.name)).map((app) => {
+                    const processNames = getAppProcessNames(app);
+                    const isExpandable = processNames.length > 1;
+                    const expanded = expandedAppIds.includes(app.id);
+                    const full = isAppCategoryFull(app.id);
+                    const indeterminate = isAppCategoryIndeterminate(app.id);
+                    return (
+                        <div key={app.id} className="apps-sites-category">
+                            <div className="apps-sites-category-row">
+                                {isExpandable && (
+                                    <button
+                                        type="button"
+                                        className="apps-sites-expand-btn"
+                                        onClick={() => toggleExpandApp(app.id)}
+                                        aria-expanded={expanded}
+                                        aria-label={expanded ? 'Collapse' : 'Expand'}
+                                    >
+                                        <span className={`apps-sites-chevron ${expanded ? 'expanded' : ''}`}>▸</span>
+                                    </button>
+                                )}
+                                {!isExpandable && <span className="apps-sites-expand-placeholder" />}
+                                <label className="apps-sites-item apps-sites-category-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={full}
+                                        ref={(el) => {
+                                            if (el) appCategoryCheckboxRefs.current[app.id] = el;
+                                            else delete appCategoryCheckboxRefs.current[app.id];
+                                        }}
+                                        onChange={() => toggleAppCategory(app.id)}
+                                    />
+                                    <span className="apps-sites-item-label">{app.name}</span>
+                                    {isExpandable && (
+                                        <span className="apps-sites-category-count">
+                                            ({full ? processNames.length : (getAppCategoryPartial(app.id).length || 0)}/{processNames.length})
+                                        </span>
+                                    )}
+                                </label>
+                            </div>
+                            {isExpandable && expanded && (
+                                <div className="apps-sites-inner-list">
+                                    {processNames.map((proc) => (
+                                        <label key={proc} className="apps-sites-item apps-sites-inner-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={isAppItemSelected(app.id, proc)}
+                                                onChange={() => toggleAppItem(app.id, proc)}
+                                            />
+                                            <span className="apps-sites-item-label">{proc.replace(/\.exe$/i, '')}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
             <div className="apps-sites-save-section">
                 <button
@@ -288,7 +570,15 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
                     <button
                         type="button"
                         className="btn btn-secondary apps-sites-save-button"
-                        onClick={() => handleSaveAppsForChild(selectedChildId)}
+                        onClick={async () => {
+                            try {
+                                await handleSaveAppsForChild(selectedChildId);
+                                alert('✅ Apps saved successfully!');
+                                setActiveSection(null);
+                            } catch (error) {
+                                alert('❌ Failed to save apps. Please try again.');
+                            }
+                        }}
                     >
                         Save for {selectedChild.nickname || selectedChild.email || selectedChild.uid}
                     </button>
@@ -297,41 +587,89 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
         </div>
     );
 
-    const handleSaveApps = () => {
-        for (const child of children) {
-            handleSaveAppsForChild(child.id);
+    const handleSaveApps = async () => {
+        try {
+            if (children.length === 0) {
+                alert('No children available to save settings for.');
+                return;
+            }
+            for (const child of children) {
+                await handleSaveAppsForChild(child.id);
+            }
+            alert('✅ Apps saved successfully!');
+            setActiveSection(null);
+        } catch (error) {
+            alert('❌ Failed to save apps. Please try again.');
         }
     };
 
-    const handleSaveAppsForChild = async(childId) => {
-        const selectedProcessNames = selectedAppIds
-            .flatMap((id) => {
-                const p = apps.find((app) => app.id === id)?.processName;
-                if (Array.isArray(p)) return p.map((n) => String(n).toLowerCase());
-                if (p != null && p !== '') return [String(p).toLowerCase()];
-                return [];
-            });
-        try{
-            await updateChildAppsApi(childId, selectedProcessNames, user.token);
-        }catch(error){
-            console.error('Failed to save apps for child:', error);
-        }
-        
-    }
+    const handleSaveAppsForChild = async (childId) => {
+        const fromFull = selectedAppIds.flatMap((id) => getAppProcessNames(apps.find((a) => a.id === id) || {}));
+        const fromPartial = Object.values(selectedAppPartial).flat();
+        const selectedProcessNames = [...new Set([...fromFull, ...fromPartial])];
+        await updateChildAppsApi(childId, selectedProcessNames, user.token);
+    };
     const renderSitesContent = () => (
         <div className="apps-sites-modal-layout">
             <div className="apps-sites-checklist">
                 <h3>Choose Sites:</h3>
-                {[...sites].sort((a, b) => a.name.localeCompare(b.name)).map((site) => (
-                    <label key={site.id} className="apps-sites-item">
-                        <input
-                            type="checkbox"
-                            checked={selectedSiteIds.includes(site.id)}
-                            onChange={() => toggleSite(site.id)}
-                        />
-                        <span className="apps-sites-item-label">{site.name}</span>
-                    </label>
-                ))}
+                <p className="apps-sites-hint">Select a whole category or expand to choose specific sites.</p>
+                {[...sites].sort((a, b) => a.name.localeCompare(b.name)).map((site) => {
+                    const urls = getSiteUrls(site);
+                    const isExpandable = urls.length > 1;
+                    const expanded = expandedSiteIds.includes(site.id);
+                    const full = isSiteCategoryFull(site.id);
+                    const indeterminate = isSiteCategoryIndeterminate(site.id);
+                    return (
+                        <div key={site.id} className="apps-sites-category">
+                            <div className="apps-sites-category-row">
+                                {isExpandable && (
+                                    <button
+                                        type="button"
+                                        className="apps-sites-expand-btn"
+                                        onClick={() => toggleExpandSite(site.id)}
+                                        aria-expanded={expanded}
+                                        aria-label={expanded ? 'Collapse' : 'Expand'}
+                                    >
+                                        <span className={`apps-sites-chevron ${expanded ? 'expanded' : ''}`}>▸</span>
+                                    </button>
+                                )}
+                                {!isExpandable && <span className="apps-sites-expand-placeholder" />}
+                                <label className="apps-sites-item apps-sites-category-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={full}
+                                        ref={(el) => {
+                                            if (el) siteCategoryCheckboxRefs.current[site.id] = el;
+                                            else delete siteCategoryCheckboxRefs.current[site.id];
+                                        }}
+                                        onChange={() => toggleSiteCategory(site.id)}
+                                    />
+                                    <span className="apps-sites-item-label">{site.name}</span>
+                                    {isExpandable && (
+                                        <span className="apps-sites-category-count">
+                                            ({full ? urls.length : (getSiteCategoryPartial(site.id).length || 0)}/{urls.length})
+                                        </span>
+                                    )}
+                                </label>
+                            </div>
+                            {isExpandable && expanded && (
+                                <div className="apps-sites-inner-list">
+                                    {urls.map((url) => (
+                                        <label key={url} className="apps-sites-item apps-sites-inner-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={isSiteItemSelected(site.id, url)}
+                                                onChange={() => toggleSiteItem(site.id, url)}
+                                            />
+                                            <span className="apps-sites-item-label">{url.replace(/^www\./, '')}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
             <div className="apps-sites-save-section">
                 <button
@@ -345,7 +683,15 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
                     <button
                         type="button"
                         className="btn btn-secondary apps-sites-save-button"
-                        onClick={() => handleSaveSitesForChild(selectedChildId)}
+                        onClick={async () => {
+                            try {
+                                await handleSaveSitesForChild(selectedChildId);
+                                alert('✅ Sites saved successfully!');
+                                setActiveSection(null);
+                            } catch (error) {
+                                alert('❌ Failed to save sites. Please try again.');
+                            }
+                        }}
                     >
                         Save for {selectedChild.nickname || selectedChild.email || selectedChild.uid}
                     </button>
@@ -354,23 +700,141 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
         </div>
     );
 
-    const handleSaveSites = () => {
-        for (const child of children) {
-            handleSaveSitesForChild(child.id);
+    const handleSaveSites = async () => {
+        try {
+            if (children.length === 0) {
+                alert('No children available to save settings for.');
+                return;
+            }
+            for (const child of children) {
+                await handleSaveSitesForChild(child.id);
+            }
+            alert('✅ Sites saved successfully!');
+            setActiveSection(null);
+        } catch (error) {
+            alert('❌ Failed to save sites. Please try again.');
         }
     };
 
     const handleSaveSitesForChild = async (childId) => {
-        const selectedSiteNames = selectedSiteIds.flatMap((id) => {
-            const u = sites.find((site) => site.id === id)?.url;
-            return Array.isArray(u) ? u : (u != null && u !== '' ? [u] : []);
-        });
+        const fromFull = selectedSiteIds.flatMap((id) => getSiteUrls(sites.find((s) => s.id === id) || {}));
+        const fromPartial = Object.values(selectedSitePartial).flat();
+        const selectedSiteNames = [...new Set([...fromFull, ...fromPartial])];
+        await updateChildSitesApi(childId, selectedSiteNames, user.token);
+    };
 
+    const renderPermanentSitesContent = () => (
+        <div className="apps-sites-modal-layout">
+            <div className="apps-sites-checklist">
+                <h3>Choose Permanent Sites:</h3>
+                <p className="apps-sites-hint">Select sites to always block (permanent). Same categories as Sites Control.</p>
+                {[...sites].sort((a, b) => a.name.localeCompare(b.name)).map((site) => {
+                    const urls = getSiteUrls(site);
+                    const isExpandable = urls.length > 1;
+                    const expanded = expandedPermanentSiteIds.includes(site.id);
+                    const full = isPermanentSiteCategoryFull(site.id);
+                    const indeterminate = isPermanentSiteCategoryIndeterminate(site.id);
+                    return (
+                        <div key={site.id} className="apps-sites-category">
+                            <div className="apps-sites-category-row">
+                                {isExpandable && (
+                                    <button
+                                        type="button"
+                                        className="apps-sites-expand-btn"
+                                        onClick={() => toggleExpandPermanentSite(site.id)}
+                                        aria-expanded={expanded}
+                                        aria-label={expanded ? 'Collapse' : 'Expand'}
+                                    >
+                                        <span className={`apps-sites-chevron ${expanded ? 'expanded' : ''}`}>▸</span>
+                                    </button>
+                                )}
+                                {!isExpandable && <span className="apps-sites-expand-placeholder" />}
+                                <label className="apps-sites-item apps-sites-category-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={full}
+                                        ref={(el) => {
+                                            if (el) permanentSiteCategoryCheckboxRefs.current[site.id] = el;
+                                            else delete permanentSiteCategoryCheckboxRefs.current[site.id];
+                                        }}
+                                        onChange={() => togglePermanentSiteCategory(site.id)}
+                                    />
+                                    <span className="apps-sites-item-label">{site.name}</span>
+                                    {isExpandable && (
+                                        <span className="apps-sites-category-count">
+                                            ({full ? urls.length : (getPermanentSiteCategoryPartial(site.id).length || 0)}/{urls.length})
+                                        </span>
+                                    )}
+                                </label>
+                            </div>
+                            {isExpandable && expanded && (
+                                <div className="apps-sites-inner-list">
+                                    {urls.map((url) => (
+                                        <label key={url} className="apps-sites-item apps-sites-inner-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={isPermanentSiteItemSelected(site.id, url)}
+                                                onChange={() => togglePermanentSiteItem(site.id, url)}
+                                            />
+                                            <span className="apps-sites-item-label">{url.replace(/^www\./, '')}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+            <div className="apps-sites-save-section">
+                <button
+                    type="button"
+                    className="btn btn-primary apps-sites-save-button"
+                    onClick={handleSavePermanentSites}
+                >
+                    Save for All Children
+                </button>
+                {selectedChildId && selectedChild && (
+                    <button
+                        type="button"
+                        className="btn btn-secondary apps-sites-save-button"
+                        onClick={async () => {
+                            try {
+                                await handleSavePermanentSitesForChild(selectedChildId);
+                                alert('✅ Permanent sites saved successfully!');
+                                setActiveSection(null);
+                            } catch (error) {
+                                alert('❌ Failed to save permanent sites. Please try again.');
+                            }
+                        }}
+                    >
+                        Save for {selectedChild.nickname || selectedChild.email || selectedChild.uid}
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+
+    const handleSavePermanentSites = async () => {
         try {
-            await updateChildSitesApi(childId, selectedSiteNames, user.token);
+            if (children.length === 0) {
+                alert('No children available to save settings for.');
+                return;
+            }
+            for (const child of children) {
+                await handleSavePermanentSitesForChild(child.id);
+            }
+            alert('✅ Permanent sites saved successfully!');
+            setActiveSection(null);
         } catch (error) {
-            console.error('Failed to save sites for child:', error);
+            alert('❌ Failed to save permanent sites. Please try again.');
         }
+    };
+
+    const handleSavePermanentSitesForChild = async (childId) => {
+        const fromFull = selectedPermanentSiteIds.flatMap((id) => getSiteUrls(sites.find((s) => s.id === id) || {}));
+        const fromPartial = Object.values(selectedPermanentSitePartial).flat();
+        const selectedSiteNames = [...new Set([...fromFull, ...fromPartial])];
+        await updateChildPermanentSitesApi(childId, selectedSiteNames, user.token);
     };
 
 
@@ -420,6 +884,20 @@ return(
                     </div>
                 </div>
             </div>
+
+            <div className="quick-action-item">
+                <div 
+                    className="card quick-action-card clickable-card"
+                    onClick={() => handleCardClick('permanentSites')}
+                >
+                    <div className="card-body">
+                        <h5 className="section-title">Permanent Sites</h5>
+                        <p className="card-explanation">
+                            Sites that are always blocked for your children, regardless of time or schedule.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {activeSection && (
@@ -442,6 +920,7 @@ return(
                     <div className="modal-card-body">
                         {activeSection === 'apps' && renderAppsContent()}
                         {activeSection === 'sites' && renderSitesContent()}
+                        {activeSection === 'permanentSites' && renderPermanentSitesContent()}
                         {activeSection === 'timeControl' && (
                             <TimeControl selectedChildId={selectedChildId} children={children} />
                         )}

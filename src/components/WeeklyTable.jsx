@@ -1,12 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Form,
-  Table
-} from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { useTaskContext } from '../context/TaskContext';
 import { getKidsByFamily } from '../api/firebaseTasks';
@@ -72,6 +64,15 @@ export default function WeeklyTable({ selectedChildId: selectedChildIdProp = nul
   // which task is currently assigning
   const [pickerTaskId, setPickerTaskId] = useState(null);
   const [editingWeeklyTask, setEditingWeeklyTask] = useState(null);
+  const [taskSearchQuery, setTaskSearchQuery] = useState('');
+
+  const filteredTasks = useMemo(() => {
+    const q = (taskSearchQuery || '').trim().toLowerCase();
+    if (!q) return tasks;
+    return tasks.filter((t) =>
+      String(t?.title ?? '').toLowerCase().includes(q)
+    );
+  }, [tasks, taskSearchQuery]);
 
   const getChildIdForTask = (task) =>
     selectedChildId ||
@@ -134,13 +135,14 @@ export default function WeeklyTable({ selectedChildId: selectedChildIdProp = nul
   const hasMultipleChildren = childColorMap.size > 1;
 
   return (
-    <Container fluid className="weekly-table-page">
+    <div className="weekly-table-page">
       <h1 className="page-title">Weekly schedule</h1>
 
       {user?.role === 'PARENT' && selectedChildIdProp == null && (
-        <Form.Group className="mb-3">
-          <Form.Label>Assign schedule for</Form.Label>
-          <Form.Select
+        <div className="form-group mb-3">
+          <label className="form-label">Assign schedule for</label>
+          <select
+            className="form-select"
             value={parentSelectedChildId}
             onChange={(e) => setParentSelectedChildId(e.target.value)}
           >
@@ -150,8 +152,8 @@ export default function WeeklyTable({ selectedChildId: selectedChildIdProp = nul
                 {child.nickname || child.email || child.id}
               </option>
             ))}
-          </Form.Select>
-        </Form.Group>
+          </select>
+        </div>
       )}
 
       {hasMultipleChildren && user?.role === 'PARENT' && (
@@ -188,7 +190,7 @@ export default function WeeklyTable({ selectedChildId: selectedChildIdProp = nul
 
       <div className="weekly-layout-row">
         <div className="weekly-table-wrapper">
-          <Table bordered className="weekly-schedule-table">
+          <table className="table bordered weekly-schedule-table">
           <thead>
             <tr>
               <th className="weekly-table-time-col">Time</th>
@@ -220,23 +222,23 @@ export default function WeeklyTable({ selectedChildId: selectedChildIdProp = nul
                           >
                             <TaskItem task={t} />
                             <div className="d-flex gap-1 mt-1 flex-wrap">
-                              <Button
-                                size="sm"
-                                variant="outline-primary"
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-primary"
                                 onClick={() => setEditingWeeklyTask(t)}
                               >
                                 Update
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline-danger"
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-danger"
                                 onClick={() => {
                                   const childId = getChildIdForTask(t);
                                   unassignWeekly(t, dayIdx, timeSlot, childId);
                                 }}
                               >
                                 Delete
-                              </Button>
+                              </button>
                             </div>
                           </div>
                         ))}
@@ -247,13 +249,28 @@ export default function WeeklyTable({ selectedChildId: selectedChildIdProp = nul
               ))
             )}
           </tbody>
-          </Table>
+          </table>
         </div>
 
         <aside className="weekly-table-tasks-section">
         <h5 className="weekly-table-tasks-title">Your tasks</h5>
+        <div className="weekly-table-task-search">
+          <input
+            type="search"
+            className="weekly-table-task-search-input"
+            placeholder="Search tasks..."
+            value={taskSearchQuery}
+            onChange={(e) => setTaskSearchQuery(e.target.value)}
+            aria-label="Search tasks"
+          />
+        </div>
         <div className="weekly-table-tasks-list-horizontal">
-          {tasks.map((task, index) => (
+          {filteredTasks.length === 0 ? (
+            <div className="weekly-table-no-tasks">
+              {taskSearchQuery.trim() ? 'No tasks match your search.' : 'No tasks yet.'}
+            </div>
+          ) : (
+          filteredTasks.map((task, index) => (
             <div key={`task-${task.id}-${index}`} className="weekly-table-task-card d-flex flex-column">
               {pickerTaskId === task.id && (
                 <div className="mb-2">
@@ -268,20 +285,22 @@ export default function WeeklyTable({ selectedChildId: selectedChildIdProp = nul
               )}
               <TaskItem task={task} />
               <div className="mt-2">
-                <Button
-                  size="sm"
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
                   disabled={!selectedChildId}
                   onClick={() => setPickerTaskId(task.id)}
                   title={!selectedChildId ? 'Select a child first' : undefined}
                 >
                   Assign Days
-                </Button>
+                </button>
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
         </aside>
       </div>
-    </Container>
+    </div>
   );
 }

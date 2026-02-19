@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 
 function WhatsAppMessageButton({ phoneNumbers = [], message, confirmBeforeSend = true, buttonLabel = 'Send WhatsApp' }) {
   const handleSend = () => {
@@ -18,9 +17,9 @@ function WhatsAppMessageButton({ phoneNumbers = [], message, confirmBeforeSend =
   };
 
   return (
-    <Button variant="success" size="sm" onClick={handleSend}>
+    <button type="button" className="btn btn-sm btn-success" onClick={handleSend}>
       {buttonLabel}
-    </Button>
+    </button>
   );
 }
 

@@ -34,7 +34,7 @@ No need to sign up! Use these demo users to test the app instantly:
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React + Vite + React Bootstrap  
+- **Frontend**: React + Vite + Custom CSS  
 - **State Management**: React Context API  
 - **Drag & Drop**: [`@hello-pangea/dnd`](https://github.com/hello-pangea/dnd)  
 - **Backend**: Firebase (Auth + Firestore)  

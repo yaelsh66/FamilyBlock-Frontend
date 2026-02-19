@@ -30,7 +30,7 @@ function ParentHomePage() {
   // Handle URL query parameter for section
   useEffect(() => {
     const section = searchParams.get('section');
-    if (section === 'apps' || section === 'sites') {
+    if (section === 'apps' || section === 'sites' || section === 'permanentSites') {
       setInitialSection(section);
       // Clear the query parameter after reading it
       setSearchParams({});

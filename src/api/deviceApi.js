@@ -76,7 +76,41 @@ export const updateChildSitesApi = async (childId, selectedSiteNames, idToken) =
         console.error('Failed to save sites for child:', error);
         throw error;
     }
-}           
+}
+
+export const getChildPermanentSitesApi = async (childId, idToken) => {
+    const url = `${BACKEND_BASE_URL}/get_permanent_sites/${childId}`;
+    try {
+        const response = await axiosInstance.get(url, {
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to get permanent sites for child:', error);
+        throw error;
+    }
+}
+
+export const updateChildPermanentSitesApi = async (childId, selectedSiteNames, idToken) => {
+    const url = `${BACKEND_BASE_URL}/update_permanent_sites`;
+    const payload = {
+        childId: childId,
+        siteList: selectedSiteNames,
+    };
+    try {
+        await axiosInstance.post(url, payload, {
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+                'Content-Type': 'application/json',
+            }
+        });
+    } catch (error) {
+        console.error('Failed to save permanent sites for child:', error);
+        throw error;
+    }
+}
 
 export const getIsRunningApi = async (childId, idToken) => {
     const url = `${BACKEND_BASE_URL}/get_is_running/${childId}`;

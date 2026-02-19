@@ -149,6 +149,88 @@
     font-size: 0.95rem;
 }
 
+.apps-sites-hint {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin: -0.5rem 0 1rem;
+}
+
+.apps-sites-category {
+    margin-bottom: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.apps-sites-category-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #fff;
+}
+
+.apps-sites-expand-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #4a5568;
+    border-radius: 4px;
+}
+
+.apps-sites-expand-btn:hover {
+    background: #edf2f7;
+    color: #2d3748;
+}
+
+.apps-sites-chevron {
+    display: inline-block;
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.apps-sites-chevron.expanded {
+    transform: rotate(90deg);
+}
+
+.apps-sites-expand-placeholder {
+    display: inline-block;
+    width: 28px;
+    flex-shrink: 0;
+}
+
+.apps-sites-category-label {
+    flex: 1;
+    min-width: 0;
+}
+
+.apps-sites-category-count {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-left: 4px;
+}
+
+.apps-sites-inner-list {
+    padding: 4px 0 8px 36px;
+    background: #f7fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.apps-sites-inner-item {
+    padding-left: 8px;
+}
+
+.apps-sites-inner-item .apps-sites-item-label {
+    font-size: 0.88rem;
+    color: #4a5568;
+}
+
 .apps-sites-save-button {
     flex: 1;
     min-width: 140px;
