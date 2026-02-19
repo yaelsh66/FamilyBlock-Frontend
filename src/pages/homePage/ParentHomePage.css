@@ -96,6 +96,24 @@
 .parent-home-sidebar {
   flex: 0 0 100%;
   max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  min-height: fit-content;
+}
+
+/* Match Parent Control cards to Screen Time card UI */
+.parent-home-sidebar .card {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* Keep spacing consistent with Screen Time container padding */
+.parent-home-sidebar .parent-control-container {
+  padding: 0 1rem 1.5rem;
+  margin: 0;
+  max-width: 100%;
 }
 
 .parent-home-main {

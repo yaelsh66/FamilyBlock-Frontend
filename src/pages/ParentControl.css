@@ -805,14 +805,18 @@
 }
 
 /* Quick Action Cards */
+/* Match Screen Time control-card: framed block with border and shadow */
 .quick-action-card {
     height: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .quick-action-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
@@ -845,7 +849,7 @@
 .quick-actions-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 1.25rem;
     margin-bottom: 24px;
 }
 

@@ -76,7 +76,7 @@ function ColorSchemesExample() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to={getHomeLink()} className="navbar-brand">Home</Link>
+        <Link to={getHomeLink()} className="navbar-brand">FamilyBlock</Link>
         
         <button 
           className="navbar-toggle"
@@ -128,7 +128,7 @@ function ColorSchemesExample() {
                   setIsDropdownOpen(prev => !prev);
                 }}
               >
-                🎉 Fun Time
+                Fun Time
               </button>
               {isDropdownOpen && (
                 <div 
@@ -142,19 +142,18 @@ function ColorSchemesExample() {
                   <Link 
                     to="/brawl" 
                     className="dropdown-item"
-                    style={{ color: '#003366', opacity: 1, visibility: 'visible' }}
+                    style={{ color: '#1a1d21', opacity: 1, visibility: 'visible' }}
                     onClick={() => {
                       setIsDropdownOpen(false);
                       setIsMenuOpen(false);
                     }}
                   >
-                    <span style={{ color: '#003366', display: 'inline' }}>🕹️ Play Brawl Game</span>
+                    <span style={{ color: '#1a1d21', display: 'inline' }}>Play Brawl Game</span>
                   </Link>
 
                   <div className="dropdown-divider"></div>
 
-                  {/* 🎨 Background Settings */}
-                  <div className="dropdown-header">🎨 Background Settings</div>
+                  <div className="dropdown-header">Background Settings</div>
 
                   <div className="dropdown-form">
                     <label className="form-label">Choose Color:</label>
@@ -172,13 +171,13 @@ function ColorSchemesExample() {
                       onClick={handleSave} 
                       disabled={!user?.uid}
                     >
-                      💾 Save
+                      Save
                     </button>
                     <button 
                       className="btn btn-outline-danger" 
                       onClick={handleDelete}
                     >
-                      🗑️ Delete
+                      Reset
                     </button>
                   </div>
 
@@ -192,7 +191,7 @@ function ColorSchemesExample() {
                   {user?.role === 'child' && (
                     <>
                       <div className="dropdown-divider"></div>
-                      <div className="dropdown-header">🕒 Screen Time</div>
+                      <div className="dropdown-header">Screen Time</div>
                       <div className="dropdown-screen-time">
                         <AmountBox label="Used Time" time={totalScreenTime} />
                         <AmountBox label="Pending Time" time={pendingScreenTime} />
@@ -212,19 +211,19 @@ function ColorSchemesExample() {
                   setIsMenuOpen(false);
                 }}
               >
-                🔓 Logout
+                Log out
               </button>
             )}
           </div>
 
           {user && (
             <div className="navbar-user">
-              <span>👋 Hi, {user.nickname || user.email}</span>
+              <span>{user.nickname || user.email}</span>
               <button 
                 className="btn btn-outline-danger navbar-logout-btn" 
                 onClick={handleLogout}
               >
-                🔓 Logout
+                Log out
               </button>
             </div>
           )}

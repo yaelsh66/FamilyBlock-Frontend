@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './ParentControl.css';
+import '../components/ControlScreenTime.css';
 import { updateChildAppsApi, updateChildSitesApi, getChildAppsApi, getChildSitesApi, getChildPermanentSitesApi, updateChildPermanentSitesApi } from '../api/deviceApi';
 import TimeControl from '../components/TimeControl';
 function ParentControl({ selectedChildId, children = [], initialSection = null }) {
@@ -845,10 +846,10 @@ return(
         <div className="quick-actions-wrapper">
             <div className="quick-action-item">
                 <div 
-                    className="card quick-action-card clickable-card"
+                    className="control-card clickable-card"
                     onClick={() => handleCardClick('timeControl')}
                 >
-                    <div className="card-body">
+                    <div className="control-card-body">
                         <h5 className="section-title">Time Control</h5>
                         <p className="card-explanation">
                             Set daily time limits and schedule time restrictions for your children.
@@ -859,10 +860,10 @@ return(
             
             <div className="quick-action-item">
                 <div 
-                    className="card quick-action-card clickable-card"
+                    className="control-card clickable-card"
                     onClick={() => handleCardClick('apps')}
                 >
-                    <div className="card-body">
+                    <div className="control-card-body">
                         <h5 className="section-title">Apps Control</h5>
                         <p className="card-explanation">
                             Select which applications should be blocked or allowed for your children.
@@ -873,10 +874,10 @@ return(
             
             <div className="quick-action-item">
                 <div 
-                    className="card quick-action-card clickable-card"
+                    className="control-card clickable-card"
                     onClick={() => handleCardClick('sites')}
                 >
-                    <div className="card-body">
+                    <div className="control-card-body">
                         <h5 className="section-title">Sites Control</h5>
                         <p className="card-explanation">
                             Manage which websites your children can access. Block or allow specific domains.
@@ -887,10 +888,10 @@ return(
 
             <div className="quick-action-item">
                 <div 
-                    className="card quick-action-card clickable-card"
+                    className="control-card clickable-card"
                     onClick={() => handleCardClick('permanentSites')}
                 >
-                    <div className="card-body">
+                    <div className="control-card-body">
                         <h5 className="section-title">Permanent Sites</h5>
                         <p className="card-explanation">
                             Sites that are always blocked for your children, regardless of time or schedule.
