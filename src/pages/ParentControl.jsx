@@ -20,6 +20,14 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
         { id: 4, name: "Netflix", url: "netflix.com" },
         { id: 5, name: "TikTok", url: "tiktok.com" },
         { id: 6, name: "Kan", url: ["kan.org.il", "kankids.org.il"] },
+        { id: 7, name: "Facebook", url: "facebook.com" },
+        { id: 8, name: "Instagram", url: "instagram.com" },
+        { id: 9, name: "Twitter", url: "twitter.com" },
+        { id: 10, name: "LinkedIn", url: "linkedin.com" },
+        { id: 11, name: "Reddit", url: "reddit.com" },
+        { id: 12, name: "Pinterest", url: "pinterest.com" },
+        { id: 13, name: "Snapchat", url: "snapchat.com" },
+        { id: 14, name: "Tumblr", url: "tumblr.com" },
     ];
     
     const apps = [

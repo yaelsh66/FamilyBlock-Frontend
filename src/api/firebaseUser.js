@@ -24,28 +24,6 @@ export const getUserData = async (uid, idToken) => {
   }
 };
 
-// 🔄 Update child's total and pending time
-export const updateChildTime = async (totalTime, pendingTime, idToken) => {
-  const url = `${BACKEND_BASE_URL}/update_time`;
-  const payload = {
-    totalTime: totalTime,
-    pendingTime: pendingTime
-  };
-
-  try{
-    await axios.patch(url, payload, {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-        'Content-Type': 'application/json',
-      }
-    })
-  } catch (err) {
-    console.error('❌ Failed to update total & pending time:',  err.message);
-    throw err;
-  }
-
-}
-
 export const updateUserData = async (uid, updates, idToken) => {
   const url = `${BACKEND_BASE_URL}/update`;
 
