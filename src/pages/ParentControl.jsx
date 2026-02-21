@@ -15,7 +15,7 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
             "cardgames.io", "arkadium.com", "freegames.org", "addictinggames.com", 
             "crazygames.com", "poki.com", "yo-yoo.co.il",
              "www.yo-yoo.co.il/games/gameshttp/nahashim.htm", "id.blooket.com", 
-             "dashboard.blooket.com", "www.msn.com", "www.msn.com/en-us/news/world"] },
+             "dashboard.blooket.com", "www.msn.com", "www.msn.com/en-us/news/world", "kids.hidabroot.org", "kids.hidabroot.org/games"] },
         { id: 3, name: "YouTube", url: ["youtube.com", "youtubekids.com"] },
         { id: 4, name: "Netflix", url: "netflix.com" },
         { id: 5, name: "TikTok", url: "tiktok.com" },
@@ -121,7 +121,8 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
               id: 9,
               name: "Custom",
               processName: [
-                "mikmak2.exe"
+                "mikmak2.exe",
+                "devenv.exe"
               ]
             },
             {
