@@ -158,7 +158,6 @@ function TaskHistoryPage() {
                   <th>Time (min)</th>
                   <th>Child comment</th>
                   <th>Parent comment</th>
-                  <th>Created</th>
                   <th>Submitted</th>
                   <th>approved At</th>
                 </tr>
@@ -171,7 +170,6 @@ function TaskHistoryPage() {
                     <td>{item.minutesReward ?? item.screenTime ?? '-'}</td>
                     <td>{item.childComment || '-'}</td>
                     <td>{item.parentComment || '-'}</td>
-                    <td>{formatDateTime(item.createdAt || item.created_at)}</td>
                     <td>{formatDateTime(item.submittedAt || item.submitted_at || item.completedAt || item.completed_at)}</td>
                     <td>{formatDateTime(item.approvedAt || item.lastUpdatedDate || item.updatedAt || item.updated_at)}</td>
                   </tr>
