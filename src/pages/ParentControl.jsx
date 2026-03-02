@@ -50,6 +50,7 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
               processName: [
                 "MinecraftLauncher.exe",
                 "Minecraft.Windows.exe",
+                "javaw.exe"
               ]
             },
           

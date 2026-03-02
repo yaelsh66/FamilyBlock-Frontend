@@ -70,6 +70,7 @@ const HomePage = () => {
           </button>
 
           <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+            <Link to="/home" className="home-nav-link" onClick={() => setIsMenuOpen(false)}>Home</Link>
             <button type="button" className="home-nav-link" onClick={() => handleScrollTo('how')}>How it works</button>
             <button type="button" className="home-nav-link" onClick={() => handleScrollTo('features')}>Features</button>
             <button type="button" className="home-nav-link" onClick={() => handleScrollTo('why')}>Why us</button>

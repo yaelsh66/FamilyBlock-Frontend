@@ -1,0 +1,23 @@
+.home-page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.home-page__parents {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 22%;
+  height: auto;
+  object-fit: contain;
+}
+
+.home-page__child {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  max-width: 38%;
+  height: auto;
+  object-fit: contain;
+}

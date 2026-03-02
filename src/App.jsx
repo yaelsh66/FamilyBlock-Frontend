@@ -1,6 +1,7 @@
 
 import ParentHomePage from './pages/homePage/ParentHomePage.jsx';
 import PublicHomePage from './pages/homePage/PublicHomePage.jsx';
+import HomePage from './pages/homePage/HomePage.jsx';
 import Navbar from './templates/Navbar.jsx'
 import Login from './components/Login.jsx';
 import { Routes, Route, Outlet } from 'react-router-dom';
@@ -35,6 +36,7 @@ function App() {
     <div>
       <Routes>
         <Route path="/" element={<PublicHomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route element={<AppLayout />}>
           <Route path='/week' element={<WeeklyTable />} />
           <Route path="/parent" element={<ParentHomePage />} />
