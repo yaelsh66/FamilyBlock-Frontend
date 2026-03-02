@@ -41,7 +41,7 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
                 "MicrosoftSudoku.exe",
                 "Jigsaw.exe",
                 "GameBar.exe",
-                "Microsoft.TreasureHunt.exe"
+                "TreasureHunt.exe"
               ]
             },
           
