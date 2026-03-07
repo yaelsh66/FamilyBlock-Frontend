@@ -126,7 +126,8 @@ function ParentControl({ selectedChildId, children = [], initialSection = null }
               name: "Custom",
               processName: [
                 "mikmak2.exe",
-                "devenv.exe"
+                "devenv.exe",
+                "PlantsVsZombies.exe"
               ]
             },
             {
